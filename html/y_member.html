@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        我的会员
+    </title>
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <meta content="webkit" name="renderer">
+    <meta content="no-siteapp" http-equiv="Cache-Control" />
+    <meta content="yes" name="mobile-web-app-capable" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no,email=no,address=no" name="format-detection" />
+    <meta content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+    <link href="../css/y_common.css" rel="stylesheet" />
+    <link href="../css/swiper.min.css" rel="stylesheet" />
+    <script src="../js/adaptive.js" type="text/javascript"></script>
+    <script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="../js/dlc.js?v=5.0" type="text/javascript"></script>
+    <script>
+        window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+        .main_btn {
+            margin-top: 3rem;
+        }
+
+        .main1_btn {
+            width: 6.6rem;
+            height: .88rem;
+            margin: 0.7rem auto 0;
+            margin-top: 3rem;
+            display: flex;
+            color: #fff;
+            border-radius: 50px;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(left top, #FFB458, #FF9757);
+            background: -webkit-linear-gradient(left top, #FFB458, #FF9757);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex flex-column type1" style="display: none;">
+        <img src="../img/y_10.png" style="width: 2.88rem;height: 2.88rem;margin-top: 2rem" />
+        <p class="font18 mt30">未开通</p>
+        <p class="font18 mt30 col9">开通会员，享受对应折扣优惠</p>
+        <a class="main_btn" href="y_pay.html">立即开通</a>
+    </div>
+    <div class="flex flex-column type2" style="display: none;">
+        <img src="../img/y_11.png" style="width: 2.88rem;height: 2.88rem;margin-top: 2rem" />
+        <p class="font18 mt30 vip">已开通</p>
+        <p class="font18 mt30 col9">会员到期时间：<span class="vip_deadline"></span><!-- 2017-08-12 15:00 -->
+        </p>
+        <p class="font18 mt20 col9">会员，可享受会员<span class="discount">
+                <!-- 9.8 --></span>折优惠</p>
+        <a class="main1_btn" href="y_pay.html">续费</a>
+    </div>
+</body>
+
+</html>
+<script src="../js/Unix.js" type="text/javascript"></script>
+<script type="text/javascript">
+    isBinding();
+    
+    dlc_request('/api/vip/api', {
+        api_name: 'isVip',
+        openid: localStorage.getItem('token')
+    }, function (res) {
+        console.log(res);
+        if (res.code == 1) {
+            $('.type2').show();
+            $('.vip').attr('data-id', res.data.vip);
+            $('.vip_deadline').text(date('Y-m-d H:i', res.data.vip_deadline));
+            $('.discount').text(res.data.discount);
+        } else if (res.code == 0) {
+            $('.type1').show();
+        } else {
+            dlctipbox.show(res.msg)
+        }
+    })
+</script>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        关于我们
+    </title>
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <meta content="webkit" name="renderer">
+    <meta content="no-siteapp" http-equiv="Cache-Control" />
+    <meta content="yes" name="mobile-web-app-capable" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no,email=no,address=no" name="format-detection" />
+    <meta content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+    <link href="../css/y_common.css" rel="stylesheet" />
+    <script src="../js/adaptive.js" type="text/javascript"></script>
+    <script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="../js/dlc.js?v=5.0" type="text/javascript"></script>
+    <script>
+        window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+        .body {
+            background: #f1f1f1;
+        }
+
+        .about_container {
+            line-height: .6rem;
+        }
+
+        .about_container>div {
+            padding: .2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="about_container">
+        <!-- <img class="img" style="height: 4rem" /> -->
+        <div>
+            <p class="about">
+                <!-- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget.  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget. -->
+            </p>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script type="text/javascript">
+    isBinding();
+    
+    dlc_request('/api/personage/api', {
+        api_name: 'aboutUs',
+        openid: localStorage.getItem('token')
+    }, function (res) {
+        console.log(res);
+        if (res.code == 1) {
+            $('.about_container').prepend('<p class="tac"><img class="img" src="' + res.data.img +
+                '" style="height: 4rem;width: 100%;" /></p>');
+            $('.about').html(res.data.about);
+        } else {
+            dlctipbox.show(res.msg)
+        }
+    })
+</script>

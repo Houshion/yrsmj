@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发票信息</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/zy_common.css" />
+    <link rel="stylesheet" href="../css/zy_base.css" />
+    <link rel="stylesheet" href="../js/mobiscroll/mobiscroll.jquery.min.css" />
+    <link rel="stylesheet" href="../js/LArea-master/LArea.min.css">
+    <style>
+        .mbsc-sc-whl-w{
+            max-width: 100%;
+            position: relative;
+            min-width: 100% !important;
+        }
+        .mbsc-mobiscroll .r{
+            color: #f79e20;
+        }
+        .mbsc-mobiscroll .l{
+            color: #999;
+        }
+        .mbsc-mobiscroll .mbsc-sc-whl-l {
+            border-top: 1px solid #dcdcdc;
+            border-bottom: 1px solid #dcdcdc;
+        }
+        .mbsc-mobiscroll .mbsc-sc-itm {
+             font-size: .3rem;
+        }
+        .area_ctrl{
+            background-color:#fff;
+        }
+        .area_btn{
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header class="tabBox flex bgf color-333 font-14">
+        <div class="active"><span>增值税专用发票</span></div>
+        <div><span>普通发票</span></div>
+        <div><span>机打/定额发票</span></div>
+    </header>
+    <div class="invoiceBox">
+        <div class="box1 bgf paddingLR-24 font-15">
+            <ul>
+                <li class="LR-block">
+                    <span class="color-333">发票抬头</span>
+                    <input type="text" placeholder="请输入发票抬头" value="" class="color-333 row-1 text-right"  id="title1">
+                </li>
+                <li class="LR-block">
+                    <span class="color-333">纳税人识别号</span>
+                    <input type="text" placeholder="请输入纳税人识别号" value="" class="color-333 row-1 text-right" id="taxpayer_number">
+                </li>
+                <li class="LR-block">
+                    <span class="color-333">地址</span>
+                    <em>
+                        <input type="text"  value="" class="color-333 row-1 text-right " readonly id="city"  style="width: 5rem;">
+                        <input id="cityValue1" type="text" hidden value=""/>
+                        <img src="../img/y_arrow_right.png" class="arrow-r" alt="">
+                    </em>
+                </li>
+                <li class="LR-block">
+                    <span class="color-333">详细地址</span>
+                    <input type="text" placeholder="请输入详细地址" value="" class="color-333 row-1 text-right" id="address">
+                </li>
+                <li class="LR-block">
+                    <span class="color-333">电话</span>
+                    <input type="text" placeholder="请输入电话号码" value="" class="color-333 row-1 text-right" id="phone">
+                </li>
+                <li class="LR-block">
+                    <span class="color-333">账号</span>
+                    <input type="text" placeholder="请输入账号" value="" class="color-333 row-1 text-right" id="bank_account">
+                </li>
+                <li class="LR-block">
+                    <span class="color-333">开户行</span>
+                    <input type="text" placeholder="请输入开户行" value="" class="color-333 row-1 text-right" id="bank_title">
+                </li>
+            </ul>
+        </div>
+        <div class="box2">
+            <ul class="paddingLR-24 bgf font-15 active box3">
+                <li class="LR-block">
+                    <span class="color-333">发票抬头</span>
+                    <input type="text" placeholder="请输入发票抬头" value="" class="color-333 row-1 text-right" id="title2">
+                </li>
+                <li class="LR-block" id="cotBox">
+                    <span class="color-333">发票内容</span>
+                    <em>
+                        <input type="text"  value="" class="color-333 row-1 text-right " readonly id="cotsValue">
+                        <img src="../img/y_arrow_right.png" class="arrow-r" alt="">
+                    </em>
+                </li>
+            </ul>
+            <div class="paddingTB-3 color-999 paddingLR-24 font-14">寄送信息</div>
+            <ul class="paddingLR-24 bgf font-15">
+                <li class="LR-block">
+                    <span class="color-333">收件人</span>
+                    <input type="text" placeholder="请输入收件人姓名" value="" class="color-333 row-1 text-right" id="consignee_name">
+                </li>
+                <li class="LR-block">
+                    <span class="color-333">收票人手机号</span>
+                    <input type="number" placeholder="请输入收票人手机号" value="" class="color-333 row-1 text-right" id="shiping_tel">
+                </li>
+                <li class="LR-block">
+                    <span class="color-333">收票人地址</span>
+                    <em>
+                        <input type="text"  value="" class="color-333 row-1 text-right " readonly id="shiping_city" style="width: 5rem;">
+                        <input id="cityValue2" type="text" hidden value=""/>
+                        <img src="../img/y_arrow_right.png" class="arrow-r" alt="">
+                    </em>
+                </li>
+                <li class="LR-block">
+                    <span class="color-333">详细地址</span>
+                    <input type="text" placeholder="请输入详细地址" value="" class="color-333 row-1 text-right" id="shiping_address">
+                </li>
+                <li class="LR-block">
+                    <span class="color-333">来店自取发票</span>
+                    <label class="flex-center flex-1  row-1 jc_e">
+                        <input type="checkbox"  value="1" checked hidden="" id="pick_up">
+                        <span class="round"></span>
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="confirm" style="margin: .6rem auto;">确定</div>
+</body>
+</html>
+<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js?v=5.0" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="../js/mobiscroll/mobiscroll.jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<!--<script src="../js/LArea-master/LAreaData1.js"></script>-->
+<script src="../js/LArea-master/cityData.js"></script>
+<script src="../js/LArea-master/LArea.js"></script>
+<script>
+    isBinding();
+    
+    /*
+    type
+    1.增值税2.普通3.机打
+     */
+    var type=1;
+    $(function () {
+        //tab切换
+        $('.tabBox div').click(function () {
+            var index=$(this).index();
+            type=index+1;
+            $(this).addClass('active').siblings().removeClass('active');
+            //切换初始化公用模块值
+                $('input[type=text]').val('');
+                $('input[type=number]').val('');
+            if(index==0){
+                $('.box1').show();
+                $('.box3').hide();
+            }else{
+                $('#cotsValue').val('');
+                $('.box1').hide();
+                $('.box3').show();
+            }
+        });
+        //地址选择
+        area('#city','#cityValue1');
+        area('#shiping_city','#cityValue2');
+        //发票内容
+        dlc_request('/api/Personage/api',{api_name:'shop_Content'},function(res) {
+            console.log(res);
+            if (res.code == 1) {
+                var obj={};
+                var arrObj=[];
+                $.each(res.data,function (idx,item) {
+                    obj={};
+                    obj.value=idx;
+                    obj.display=item;
+                    arrObj.push(obj);
+                });
+                console.log(arrObj);
+                $('#cotBox').mobiscroll().scroller({
+                    theme: 'mobiscroll',
+                    display: 'bottom',
+                    cancelText: '',
+                    setText: '',
+                    closeOnOverlayTap: false,
+                    showLabel: true,
+                    lang: 'zh',
+                    wheels: [
+                        [{
+                            label: '',
+                            data: arrObj
+                        }]
+                    ],
+                    onBeforeClose: function (event, inst) {
+                        var button=event.button;
+                        if (button !== 'cancel') {
+                            var index=event.valueText;
+                            console.log(event.valueText);
+                            $('#cotsValue').val(arrObj[index].display);
+                        }
+                    },
+                    headerText: function (valueText) {
+                        return "<div class='headerText'><a class='l' onclick='cancle()'>取消</a><a class='r' onclick='confirm();'>完成</a></div><div class='notnotice'></div>";
+                    }
+                });
+            };
+        });
+        //选择是否自取
+        $('#pick_up').change(function () {
+            if($(this).is(':checked')){
+                $(this).val(1);
+            }else{
+                $(this).val(0);
+            }
+        })
+        //确认
+        $('.confirm').click(function () {
+            var title1 = $('#title1').val();//发票抬头-1.增值税
+            var title2 = $('#title2').val();//发票抬头-2.普通3.机打
+            var taxpayer_number = $('#taxpayer_number').val();//纳税人识别号
+            var city = $('#city').val();//地址
+            var address = $('#address').val();//详细地址
+            var phone = $('#phone').val();//电话
+            var bank_account = $('#bank_account').val();//账号
+            var bank_title = $('#bank_title').val();//账户名
+            var cotsValue = $('#cotsValue').val();//发票内容
+            var consignee_name = $('#consignee_name').val();//收件人姓名
+            var shiping_tel = $('#shiping_tel').val();//收票人手机
+            var shiping_city = $('#shiping_city').val();//收票人地址
+            var shiping_address = $('#shiping_address').val();//收票人详细地址
+            var pick_up = $('#pick_up').val();//是否自取
+            var cityValue1=$('#cityValue1').val();//地址id
+            var cityValue2=$('#cityValue2').val();//收票人地址id
+            var invoice_content=$('#cotsValue').val();//发票内容
+            console.log(pick_up);
+            console.log(cityValue1);
+            console.log(cityValue2);
+            if(type==1){
+                if(isNull(title1)){
+                    dlctipbox.show('请输入发票抬头');
+                    return false;
+                }
+                if(isNull(taxpayer_number)){
+                    dlctipbox.show('请输入纳税人识别号');
+                    return false;
+                }
+                if(isNull(city)){
+                    dlctipbox.show('请选择地址');
+                    return false;
+                }
+                if(isNull(address)){
+                    dlctipbox.show('请输入详细地址');
+                    return false;
+                }
+                if(isNull(phone)){
+                    dlctipbox.show('请输入电话号码');
+                    return false;
+                }
+                if(!checkMobileAndTel(phone)){
+                    dlctipbox.show('请输入正确电话号码');
+                    return false;
+                }
+                if(isNull(bank_account)){
+                    dlctipbox.show('请输入账号');
+                    return false;
+                }
+                if(isNull(bank_title)){
+                    dlctipbox.show('请输入开户行');
+                    return false;
+                }
+            }else if(type == 2 || type == 3){
+                if(isNull(title2)){
+                    dlctipbox.show('请输入发票抬头');
+                    return false;
+                }
+                if(isNull(cotsValue)){
+                    dlctipbox.show('请选择发票内容');
+                    return false;
+                }
+            }
+
+            if(isNull(consignee_name)){
+                dlctipbox.show('请输入收件人姓名');
+                return false;
+            }
+            if(isNull(shiping_tel)){
+                dlctipbox.show('请输入收票人手机');
+                return false;
+            }
+            if(!checkMobileAndTel(shiping_tel)){
+                dlctipbox.show('请输入正确收票人手机');
+                return false;
+            }
+            if(isNull(shiping_city)){
+                dlctipbox.show('请选择收票人地址');
+                return false;
+            }
+            if(isNull(shiping_address)){
+                dlctipbox.show('请输入收票人详细地址');
+                return false;
+            }
+            var obj={
+                api_name:'plain_invoice',
+                type:type,
+                title:type==1?title1:title2,
+                pick_up:pick_up,
+                taxpayer_number:taxpayer_number?taxpayer_number:'',
+                phone:phone?phone:'',
+                address:address?address:'',
+                bank_title:bank_title?bank_title:'',
+                bank_account:bank_account?bank_account:'',
+                consignee_name:consignee_name,
+                shiping_tel:shiping_tel,
+                shiping_address:shiping_address,
+                invoice_content:invoice_content?invoice_content:'',
+                city:cityValue1?cityValue1:'',
+                shiping_city:cityValue2
+
+            };
+            console.log(obj);
+            dlc_request('/api/Personage/api',obj,function(res) {
+                if(res.code==1){
+                    dlctipbox.show(res.msg);
+                    setCookie('invoice_id',res.data.invoice_id);//设置cookie
+                    setTimeout(function () {
+                        history.go(-1);
+                    },1500);
+                }else{
+                    dlctipbox.show(res.msg);
+                }
+            })
+        })
+    });
+    function cancle() {
+        $('#cotBox').mobiscroll('cancel');
+    }
+
+    function confirm() {
+        $('#cotBox').mobiscroll('hide');
+    }
+    //地址选择
+    function area(id,valueId) {
+        var area = new LArea();
+        area.init({
+            'trigger':id , //触发选择控件的文本框，同时选择完毕后name属性输出到该位置
+            'valueTo': valueId, //选择完毕后id属性输出到该位置
+            'keys': {
+                id: 'id',
+                name: 'name'
+            }, //绑定数据源相关字段 id对应valueTo的value属性输出 name对应trigger的value属性输出
+            'type': 1, //数据源类型
+            'data': cityData //数据源
+        });
+    }
+</script>

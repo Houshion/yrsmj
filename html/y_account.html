@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        发票信息
+    </title>
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <meta content="webkit" name="renderer">
+    <meta content="no-siteapp" http-equiv="Cache-Control" />
+    <meta content="yes" name="mobile-web-app-capable" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no,email=no,address=no" name="format-detection" />
+    <meta content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+    <link href="../css/y_common.css" rel="stylesheet" />
+    <link href="../css/swiper.min.css" rel="stylesheet" />
+    <script src="../js/adaptive.js" type="text/javascript"></script>
+    <script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="../js/dlc.js?v=5.0" type="text/javascript"></script>
+    <script>
+        window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+        .bigBox {
+            background: linear-gradient(left top, #ef9d48, #f37646);
+            background: -webkit-linear-gradient(left top, #ef9d48, #f37646);
+        }
+
+        .banner {
+            height: 3.5rem;
+            display: flex;
+            background: url(../img/y_banner.png) no-repeat;
+        }
+
+        .inner_box {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: 100% 100%;
+            background: url('../img/y_9.png') no-repeat;
+            -webkit-background-size: 100% 100%;
+        }
+
+        .inner_box ul {
+            background: #fff;
+            padding: .2rem .4rem;
+            width: 90%;
+            border-radius: 5px;
+        }
+
+        .inner_box ul li {
+            margin: .2rem 0;
+        }
+
+        .inner_box ul li span {
+            display: flex;
+            width: 36%;
+            flex-shrink: 0;
+        }
+
+        .line {
+            margin: .3rem 0;
+            width: 100%;
+            height: 1px;
+            background: #eee;
+        }
+
+        .inner_box .active {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bigBox">
+        <div class="inner_box">
+            <ul>
+                <li class="flex_a address active"><span class="col9">地址</span><!-- 广东东莞市南城区周溪 -->
+                </li>
+                <li class="flex_a phone active"><span class="col9">电话</span><!-- 4008-21213574 -->
+                </li>
+                <li class="flex_a bank_account active"><span class="col9">账号</span><!-- 41354897137318325 -->
+                </li>
+                <li class="flex_a bank_title active"><span class="col9">开户行</span><!-- 广东省东莞市南城区周溪分行省东莞市南城区周溪分行省东莞市南城区周溪分行省东莞市南城区周溪分行 -->
+                </li>
+                <li class="flex_a title"><span class="col9">发票抬头</span><!-- 东莞迪尔西有限公司 -->
+                </li>
+                <li class="flex_a taxpayer_number active"><span class="col9">纳税人识别号</span><!-- 13246357328543718 -->
+                </li>
+                <li class="line"></li>
+                <li class="flex_a consignee_name"><span class="col9">收件人</span><!-- 张三 -->
+                </li>
+                <li class="flex_a shiping_address"><span class="col9">寄送地址</span><!-- 东莞市南城区 -->
+                </li>
+                <li class="flex_a shiping_tel"><span class="col9">联系电话</span><!-- 15816834411 -->
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript">
+    isBinding();
+
+    dlc_request('/api/user/api', {
+        api_name: 'getInvoiceInfo',
+        invoice_id: getUrlParam('invoice_id'),
+        openid: localStorage.getItem('token')
+    }, function (res) {
+        console.log(res);
+        if (res.code == 1) {
+            //1增值专用发票 2普通发票 3机打/定额发票',
+            if (res.data.invoice_type == 1) {
+                $('.address,.phone,.bank_account,.bank_title,.taxpayer_number').css('display', 'flex');
+            } else { //
+
+            }
+            $('.address').append('<span class="flex1">' + res.data.address + '</span>');
+            $('.phone').append('<span class="flex1">' + res.data.phone + '</span>');
+            $('.bank_account').append('<span class="flex1">' + res.data.bank_account + '</span>');
+            $('.bank_title').append('<span class="flex1">' + res.data.bank_title + '</span>');
+            $('.title').append('<span class="flex1">' + res.data.title + '</span>');
+            $('.taxpayer_number').append('<span class="flex1">' + res.data.taxpayer_number + '</span>');
+            $('.shiping_address').append('<span class="flex1">' + res.data.shiping_address + '</span>');
+            $('.shiping_tel').append('<span class="flex1">' + res.data.shiping_tel + '</span>');
+            $('.consignee_name').append('<span class="flex1">' + res.data.consignee_name + '</span>');
+        } else {
+            dlctipbox.show(res.msg)
+        }
+    })
+</script>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <meta content="webkit" name="renderer">
+    <meta content="no-siteapp" http-equiv="Cache-Control" />
+    <meta content="yes" name="mobile-web-app-capable" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no,email=no,address=no" name="format-detection" />
+    <meta content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+    <link href="../css/y_common.css" rel="stylesheet" />
+    <link href="../css/swiper.min.css" rel="stylesheet" />
+    <script src="../js/adaptive.js" type="text/javascript"></script>
+    <script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="../js/dlc.js?v=5.0" type="text/javascript"></script>
+    <script>
+        window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+        .logo {
+            display: flex;
+            padding: 1.2rem 0;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .list {
+            margin: 0.2rem .4rem;
+            height: 1rem;
+            line-height: 1rem;
+            border: 1px solid #eee;
+            border-radius: 50px;
+            padding-left: .3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .yzm_btn {
+            width: 2rem;
+            height: .66rem;
+            color: #fff;
+            text-align: center;
+            margin-right: .2rem;
+            border-radius: 50px;
+            line-height: .66rem;
+            background: -webkit-linear-gradient(left top, #FFB458, #FF9757);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="logo"><img src="../img/y_logo.png" style="width: 1.8rem;height: 1.8rem; border-radius: 50%;"></div>
+    <ul class="container">
+        <li class="list">
+            <input class="ph" type="number" name="" placeholder="请输入您的手机号码" id="tel" />
+        </li>
+        <li class="list">
+            <input class="ph yzm" type="number" name="" placeholder="请输入验证码" />
+            <div class="yzm_btn">获取验证码</div>
+        </li>
+        <button class="main_btn">确定</button>
+    </ul>
+    <script src="../js/dlc.js?v=5.0" type="text/javascript" charset="utf-8"></script>
+    <script>
+        $(function () {
+            showLoading('载入中...');
+            isLogin(function (res) {
+                console.log(res);
+                hideLoading();
+                if (res.flag == 1 && res.code == 1) { //登录成功
+                    if (res.data.phone) { //绑定手机
+                        /*
+                         type :1 地图
+                           type :2 个人中心
+                         */
+                        if (getUrlParam('type') == 1) {
+                            location.replace('./r_map.html');
+                        } else if (getUrlParam('type') == 2) {
+                            location.replace('./y_center.html');
+                        }
+                    } else { //未绑定
+                        $('title').text('绑定手机号');
+                    }
+
+                } else {
+                    dlctipbox.show(res.msg);
+                }
+            });
+            // 验证码
+            $('.yzm_btn').click(function () {
+                var tel = $('#tel').val();
+                if (isNull(tel)) {
+                    dlctipbox.show('手机号码不能为空');
+                    // return false;
+                } else if (!checkMobileAndTel(tel)) {
+                    dlctipbox.show('手机号码格式不正确');
+                    // return false;
+                } else {
+                    var second = 60;
+                    var t = setInterval(function () {
+                        if (second <= 0) {
+                            second = 0;
+                            $(".yzm_btn").text("重发验证码");
+                            $(".yzm_btn").attr("disabled", false).css({
+                                'background': '#ccc',
+                                'border': '0'
+                            });
+                            clearInterval(t);
+                        } else {
+                            second--;
+                            $(".yzm_btn").attr("disabled", true);
+                            $(".yzm_btn").text(second + "s").css({
+                                'background': '#ccc',
+                                'border': '0'
+                            });
+                        }
+                    }, 1000);
+
+                    dlc_request('/api/public/sendCode', {
+                        api_name: 'send_verifi',
+                        mobile: tel,
+                        send_type: 'binding'
+                    }, function (res) {
+                        console.log(res);
+                        if (res.code == 1) {
+                            dlctipbox.show(res.msg);
+                        } else {
+                            onOff = 0;
+                            dlctipbox.show(res.msg);
+                        }
+                    })
+                }
+            })
+            //注册按钮点击事件
+            var onOff = 0;
+            $('.main_btn').on('click', function (e) {
+                e.preventDefault();
+                if (onOff) return false;
+                var tel = $('#tel').val();
+                var yzm = $('.yzm').val();
+                if (isNull(tel)) {
+                    dlctipbox.show('手机号码不能为空');
+                    return false;
+                } else if (!checkMobileAndTel(tel)) {
+                    dlctipbox.show('手机号码格式不正确');
+                    return false;
+                } else if (isNull(yzm)) {
+                    dlctipbox.show('验证码不能为空');
+                    return false;
+                } else {
+                    onOff = 1;
+                    dlc_request('/api/personage/api', {
+                        api_name: 'banding_login',
+                        phone: tel,
+                        code: yzm,
+                        openid: localStorage.getItem('token')
+                    }, function (res) {
+                        console.log(res);
+                        if (res.code == 1) {
+                            dlctipbox.show(res.msg);
+                            setTimeout(function () {
+                                if (getUrlParam('type') == 1) {
+                                    location.href = './r_map.html';
+                                } else if (getUrlParam('type') == 2) {
+                                    location.href = './y_center.html';
+                                } else {
+                                    location.href = './y_center.html';
+                                }
+                            }, 1500)
+                        } else {
+                            onOff = 0;
+                            dlctipbox.show(res.msg);
+                        }
+                    })
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>

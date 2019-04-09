@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>详情</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/zy_common.css" />
+    <link rel="stylesheet" href="../css/zy_base.css" />
+</head>
+<body>
+        <div class="details_logo"><img src="" alt=""></div>
+        <div class="d_tit bgf paddingLR-24 paddingTB-4">
+            <div class="flex-justify-center marginBottom-20 font-16"><span class="color-333" id="title"></span><span class="color2" id="price"></span></div>
+            <div class="flex-justify-center font-14 "><em class="flex-center"><img  alt="" style="width: .3rem;"><span class="color-666 marginLeft-20" id="place_time"></span></em><span class="color-999" id="goods_num" style="display: none;"></span></div>
+        </div>
+        <div class="detailsBox marginTop-20 bgf paddingTB-4">
+            <div class="text-center marginBottom-20 color-999 font-15">——  商品详情  ——</div>
+            <div class="paddingLR-24 marginBottom-20 font-14 color-333" id="desc"></div>
+            <!--<img src="../img/zy_bg0.png" alt="" id="desc_img">-->
+        </div>
+</body>
+</html>
+<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js?v=5.0" type="text/javascript" charset="utf-8"></script>
+<script>
+    isBinding();
+    
+    var data={};
+    var type = getUrlParam('type');
+    $(function () {
+        data.cupboard_id=getUrlParam('cupboard_id');
+        data.goods_id=getUrlParam('goods_id');
+        if(type=='2'){//今日每餐
+            data.api_name='todayCateGoodsInfo';
+            $('#goods_num').show();
+            $('#place_time').prev().attr('src','../img/r_s.png');
+        }else if(type=='1'){//预订餐
+            data.api_name='BookGoodsInfo';
+            data.seller_id=getUrlParam('seller_id');
+            $('#place_time').prev().attr('src','../img/r_icon1.png');
+        }else{//订餐
+            data.api_name='shelfGoodsInfo';
+            $('#goods_num').show();
+            $('#place_time').prev().attr('src','../img/r_s.png');
+        }
+        datails();
+    });
+    function datails() {
+        loadingShow();
+        dlc_request('/api/Goods/api',data,function(res){
+            console.log(res);
+            loadingHide();
+            if(res.code==1){
+                $('.details_logo img').attr('src',res.data.poster_url);
+                $('#title').text(res.data.title);
+                $('#price').text('￥'+res.data.price);
+                if(type==2){
+                    $('#place_time').text('实际配送时间：'+(res.data.place_time==0?'暂无':res.data.place_time));
+                }else if(type==1){
+                    $('#place_time').text('计划配送时间：'+(res.data.delivery_time==0?'暂无':res.data.delivery_time));
+                }else{
+                    $('#place_time').text('实际配送时间：'+(res.data.arrive_time==0?'暂无':res.data.arrive_time));
+                }
+                $('#goods_num').text('库存：'+res.data.goods_num);
+                $('#desc').html(res.data.desc);
+            }else{
+                console.log(res.msg);
+            }
+        })
+    }
+</script>

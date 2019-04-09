@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<title>附近网点</title>
+	<link rel="stylesheet" type="text/css" href="../css/zy_common.css" />
+	<style>
+		body,
+			html,
+			#container {
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+				margin: 0;
+				font-family: "微软雅黑";
+				height: calc(100% + 20px) ;
+			}
+			
+			body {
+				position: relative;
+			}
+			.smnoprint{
+				display: none;
+			}
+			.color1{
+				color: #43188e;
+			}
+			#searchbar{
+				background: #fff;
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 999;
+				padding: 2% 0;
+				width: 100%;
+			}
+			#searchbar input{
+				height: 0.7rem;
+				margin: 0 auto;
+				width:70%;
+				border-radius: 2rem;
+				border: none;
+				outline: none;
+				display: block;
+				padding-left:15% ;
+				background: #eee url(../img/search.png) no-repeat 11% center;
+				background-size: .3rem;
+				font-size: 0.32rem;
+			}
+		</style>
+</head>
+
+<body>
+
+	<div id="searchbar">
+		<input type="text" name="" id="search" value="" placeholder="请输入设备名称" />
+	</div>
+	<div id="container"></div>
+	<img src="../img/local.png" class="getlocal" style="width: .9rem;height: .9rem;position: absolute;z-index: 99;bottom: 8%;left: 5%;" />
+</body>
+
+</html>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=N6RBZ-AJN35-AACI2-Q2ICF-HYV6O-JRBBZ"></script>
+<script type="text/javascript" src="../js/dlc.js?v=5.0"></script>
+<script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script>
+//	isBinding();
+//	
+//	loadingShow();
+
+
+	var geolocation = new qq.maps.Geolocation("N6RBZ-AJN35-AACI2-Q2ICF-HYV6O-JRBBZ", "myapp");
+
+   $(function () {
+        isLogin(function (res) {
+            console.log(res);
+            if (res.flag == 1) { //登录成功
+                dlc_request('/api/user/getTicket', {}, function (res) {
+                    if (res.code == 1) {
+                        var timestamp = (new Date().getTime() / 1000).toFixed(0);
+                        var nonceStr = Math.random().toString(36).substr(2);
+                        var ticket = wx_js(res.data.ticket, timestamp, nonceStr);
+                        wx.config({
+                            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端//alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                            appId: 'wx42a447a217e4de78', // 必填，公众号的唯一标识
+                            timestamp: timestamp, // 必填，生成签名的时间戳
+                            nonceStr: nonceStr, // 必填，生成签名的随机串
+                            signature: ticket, // 必填，签名，见附录1
+                            jsApiList: ['checkJsApi',
+                                'onMenuShareTimeline',
+                                'onMenuShareAppMessage',
+                                'onMenuShareQQ',
+                                'onMenuShareWeibo',
+                                'hideMenuItems',
+                                'showMenuItems',
+                                'hideAllNonBaseMenuItem',
+                                'showAllNonBaseMenuItem',
+                                'translateVoice',
+                                'startRecord',
+                                'stopRecord',
+                                'onRecordEnd',
+                                'playVoice',
+                                'pauseVoice',
+                                'stopVoice',
+                                'uploadVoice',
+                                'downloadVoice',
+                                'chooseImage',
+                                'previewImage',
+                                'uploadImage',
+                                'downloadImage',
+                                'getNetworkType',
+                                'openLocation',
+                                'getLocation',
+                                'hideOptionMenu',
+                                'showOptionMenu',
+                                'closeWindow',
+                                'scanQRCode',
+                                'chooseWXPay',
+                                'openProductSpecificView',
+                                'addCard',
+                                'chooseCard',
+                                'openCard'
+                            ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                        });
+                        wx.ready(function () {
+                           wx.getLocation({
+							type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+								success: function (res) {
+									var lat = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+									var lng = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+									var speed = res.speed; // 速度，以米/每秒计
+									var accuracy = res.accuracy; // 位置精度
+
+
+
+		//console.log('具体地址：' + position.addr + '经度：' + lat + '纬度' + lng);
+		var center = new qq.maps.LatLng(lat, lng);
+
+		var map = new qq.maps.Map(document.getElementById('container'), {
+			center: center,
+			zoom: 14,
+			draggable: true, //手势控制, 用来设置地图是否能够鼠标拖拽，默认值为“可以”；
+			scrollwheel: false, //用来配置地图是否能够通过鼠标滚轮操作进行放大，默认值为“可以”；
+			disableDoubleClickZoom: false // 用来配置地图是否可以通过鼠标双击进行放大，默认值为“可以”。
+		});
+
+
+		//创建marker
+		var marker = new qq.maps.Marker({
+			position: center,
+			//		        draggable: true,//设置拖拽
+			map: map
+		});
+
+		$.ajax({
+			type: "POST",
+			data: {
+				api_name: 'near_site',
+				lat: lat,
+				lng: lng,
+				openid: user_token()
+			},
+			dataType: "json",
+			url: dlcUrl() + '/api/Cupboard/api',
+			success: function (res) {
+				//                            console.log(res);
+				loadingHide();
+				if (res.code == 1) {
+					var res = res.data;
+					for (var i in res) {
+						var logo1 = new qq.maps.LatLng(res[i].lat, res[i].lng);
+						//创建marker
+						var logo = new qq.maps.Marker({
+							position: logo1,
+							map: map
+						});
+
+						//自定义标注图标
+						var anchor = new qq.maps.Point(22, 24.5),
+							size = new qq.maps.Size(44, 49),
+							origin = new qq.maps.Point(0, 0),
+							markerIcon = new qq.maps.MarkerImage(
+								"../img/logo.png",
+								size,
+								origin,
+								anchor
+							);
+						logo.setIcon(markerIcon);
+
+						//				//设置属性
+						logo.address = res[i].address;
+						logo.device_number = res[i].device_number;
+						//获取标记的点击事件
+						qq.maps.event.addListener(logo, 'click', function (e) {
+							console.log(e.target.device_number) //获取属性
+							location.href = 'r_shop.html?id=' + e.target.device_number;
+						});
+						var infoWin = new qq.maps.InfoWindow({
+							map: map,
+							content: res[i].title,
+							position: new qq.maps.LatLng(res[i].lat * 1, res[i].lng * 1),
+							zIndex: 10,
+							visible: true
+						});
+					}
+
+				} else {
+					alert(res.msg);
+				}
+
+			}
+		});
+
+		//            map.panTo(new qq.maps.LatLng(lat,lng));
+		setTimeout(function () {
+			map.panTo(new qq.maps.LatLng(lat, lng))
+		}, 1000);
+		//获取当前位置
+		$('.getlocal').click(function () {
+			map.panTo(new qq.maps.LatLng(lat, lng))
+		});
+
+		$('#search').keydown(function (event) {
+			if (event.keyCode == 13) {
+				if (isNull($('#search').val())) {
+					dlctipbox.show('请输入搜索内容！');
+				} else {
+					$.ajax({
+						type: "POST",
+						data: {
+							api_name: 'searchStationCupboard',
+							openid: user_token(),
+							keyword: $('#search').val()
+						},
+						dataType: "json",
+						url: dlcUrl() + '/api/Cupboard/api',
+						success: function (res) {
+							console.log(res)
+							if (res.data != '') {
+								map.panTo(new qq.maps.LatLng(res.data[0].lat, res.data[0].lng))
+							} else {
+								dlctipbox.show('无此网点')
+							}
+
+						}
+					})
+				}
+			}
+		});
+
+
+
+								}
+							});
+                        })
+                    } else {
+                        console.log(res.msg);
+                    }
+                })
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        });
+    });
+</script>

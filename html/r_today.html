@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="../css/common.css" />
+</head>
+<style type="text/css">
+	.img {
+		width: 1.6rem;
+		height: 1.4rem;
+	}
+
+	.wh {
+		width: 0.68rem;
+		height: 0.68rem;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border: 1px solid #e5e5e5;
+	}
+
+	.minus {
+		border-right: none;
+		border-radius: 6px 0 0 6px;
+	}
+
+	.add {
+		border-left: none;
+		border-radius: 0 6px 6px 0;
+	}
+
+	b {
+		font-weight: normal;
+	}
+
+	#pay {
+		width: 2rem;
+		height: 1rem;
+		background: -webkit-linear-gradient(left top, #ffb758, #ff9657);
+		color: #fff;
+
+	}
+
+	.tip {
+		position: absolute;
+		width: 0.3rem;
+		height: 0.31rem;
+		background: #ff6a6a;
+		color: #fff;
+		font-size: 0.24rem;
+		top: 0;
+		right: 0;
+		border-radius: 1rem;
+	}
+</style>
+
+<body>
+	<div class="bigBox">
+		<ul class="container">
+			<!--<li class="mb20 bw plr24 list">-->
+			<!--<div class="ptb30 bdb">-->
+			<!--<div class="flex">-->
+			<!--<div class="flex flex1">-->
+			<!--<img src="../img/img0.png" alt="" class="img mr15"/>-->
+			<!--<p class="flex flex_column">-->
+			<!--<span>招牌番茄鸡排饭</span>-->
+			<!--<span class="mt20 mb10 col6">￥<span class="price">26.00</span></span>-->
+			<!--<span class="font12 col9">可销售数量：10</span>-->
+			<!--</p>-->
+			<!--</div>-->
+			<!--<div class="flex_aj">-->
+			<!--<label class="wh minus"><button class="font18">&minus;</button></label>-->
+			<!--<input class="font18 wh tac num" type="number" name="" value="0"  readonly/>-->
+			<!--<label class="wh add"><button class="font18">+</button></label>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="mt24 flex">-->
+			<!--<div class="flex1 flex flex_column">-->
+			<!--<p class="flex_a mb10"><img src="../img/r_icon0.png" alt="" style="width: 0.3rem;height: 0.3rem;margin-right: 5px;"/><span>实际库存</span></p>-->
+			<!--<span class="font12 col9 mb10"><b>2份</b>  <b class="mlr5">已经上架</b>  <b>120分钟</b></span>-->
+			<!--<span class="font12 col9 mb10"><b>2份</b>  <b class="mlr5">已经上架</b>  <b>120分钟</b></span>-->
+			<!--</div>-->
+			<!--<div class="flex1 flex flex_column bdl pl24">-->
+			<!--<p class="flex_a mb10"><img src="../img/r_icon1.png" alt="" style="width: 0.3rem;height: 0.3rem;margin-right: 5px;"/><span>实际库存</span></p>-->
+			<!--<span class="font12 col9 mb10"><b>2份</b>  <b class="mlr5">已经上架</b>  <b>-120分钟</b></span>-->
+			<!--<span class="font12 col9 mb10"><b>2份</b>  <b class="mlr5">已经上架</b>  <b>-120分钟</b></span>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="more bw flex_aj ptb30 today">-->
+			<!--<span>了解详情</span><img src="../img/r_more.png" style="width: 0.3rem;height: 0.3rem;" class="ml10"/>-->
+			<!--</div>-->
+			<!--</li>-->
+		</ul>
+		<div class="bw flex">
+			<div class="flex1 flex_sb plr24">
+				<p style="position: relative;" id="cartBox"><img src="../img/r_car.png" alt="" style="width: 1.14rem;height: 1rem;"
+					    id="car" /><b class="tip tac">0</b></p>
+				<span class="col9">合计：<b class="col_price font17">￥0.00</b></span>
+			</div>
+			<span id="pay" class="flex_aj font16">去结算</span>
+		</div>
+	</div>
+</body>
+
+</html>
+<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js?v=5.0" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	isBinding();
+	var lock = 0,
+		lock2 = 0;
+	if (getUrlParam('type') == '2') { //今日每餐
+		$('title').text('今日美餐');
+		getList();
+	} else { //订餐
+		$('title').text('订餐');
+		getList2();
+	}
+
+	//详情
+	$('.container').on('click', '.today', function () {
+		location.href = 'details.html?goods_id=' + $(this).data('goods_id') + '&cupboard_id=' + getUrlParam('id') +
+			'&type=' + getUrlParam('type');
+	});
+	//进入购物车
+	$('#cartBox').click(function () {
+		location.href = 'shopping_cart.html?type=' + getUrlParam('type') + '&cupboard_id=' + getUrlParam('id') +
+			'&seller_id=' + getUrlParam('seller_id');
+	});
+
+	//添加购物车
+	$('.container').on('click', '.add', function () {
+		if (lock) {
+			return false;
+		}
+		lock = 1;
+		var numbers = $(this).prevAll('input').val() * 1 + 1;
+		var goods_id = $(this).parents('li').find('.today').data('goods_id');
+		CartEditNum(1, goods_id, this, numbers);
+	});
+	//减少购物车
+	$('.container').on('click', '.minus', function () {
+		if (lock2) {
+			return false;
+		}
+		lock2 = 1;
+		var numbers = $(this).nextAll('input').val() * 1 - 1;
+		var goods_id = $(this).parents('li').find('.today').data('goods_id');
+		if (numbers < 0) {
+			numbers = 0;
+			$(this).nextAll('input').val(numbers);
+			return false;
+		}
+		CartEditNum(2, goods_id, this, numbers);
+	});
+	//去结算
+	$('#pay').click(function () {
+		var arr = [];
+		var listObj = $('.container li');
+		for (var i = 0; i < listObj.length; i++) {
+			var single_num = listObj.find('.num').eq(i).val();
+			if (single_num != 0) {
+				arr.push(listObj.find('.today').eq(i).data('goods_id'));
+			}
+		}
+		arr = arr.join(','); //获取商品id
+		console.log(arr);
+		if (arr) {
+			location.href = 'confirm_order.html?goods_id=' + arr + '&type=' + getUrlParam('type') + '&seller_id=' +
+				getUrlParam('seller_id') + '&cupboard_id=' + getUrlParam('id');
+		} else {
+			dlctipbox.show('请选择商品');
+		}
+	});
+	//加减购物车
+	function CartEditNum(type, goods_id, _this, numbers) {
+		dlc_request('/api/Shopping/api', {
+			api_name: 'shoppingCartEditNum',
+			seller_id: getUrlParam('seller_id'),
+			type: type,
+			goods_type: getUrlParam('type'),
+			goods_id: goods_id,
+			cupboard_id: getUrlParam('id')
+		}, function (res) {
+			console.log(res);
+			lock = 0;
+			lock2 = 0;
+			if (res.code == '1') {
+				if (type == 1) { //加
+					$(_this).prevAll('input').val(numbers);
+					totals();
+					shoppingCartAnimate($(_this).parents('.list').find('.img'), $('#car'));
+				} else { //减
+					$(_this).nextAll('input').val(numbers);
+					totals();
+				}
+			} else {
+				dlctipbox.show(res.msg);
+			}
+		})
+	}
+
+	//计算
+	function totals() {
+		var listObj = $('.container li');
+		var length = listObj.length;
+		var total = 0;
+		var total_num = 0;
+		for (var i = 0; i < length; i++) {
+			var single_price = listObj.find('.price').eq(i).text();
+			var single_num = listObj.find('.num').eq(i).val();
+			total += single_price * single_num;
+			total_num += single_num * 1;
+			console.log('总价：' + total);
+		}
+		$('.tip').text(total_num);
+		$('.col_price ').text('￥' + total.toFixed(2));
+	}
+
+	function getList() {
+		loadingShow();
+		dlc_request('/api/Goods/api', {
+			api_name: 'getTodayCateGoodsList',
+			cupboard_id: getUrlParam('id')
+		}, function (res) {
+			console.log(res);
+			loadingHide();
+			var str = '';
+			if (res.code == '1') {
+				try {
+					$.each(res.data.list, function (inx, item) {
+						str += '<li class="mb20 bw plr24 list">' +
+							'<div class="ptb30 bdb">' +
+							'<div class="flex">' +
+							'<div class="flex flex1">' +
+							'<img src="' + item.cover_url + '" alt="" class="img mr15"/>' +
+							'<p class="flex flex_column">' +
+							'<span>' + item.title + '</span>' +
+							'<span class="mt20 mb10 col6">￥<span class="price">' + item.price + '</span></span>' +
+							'<span class="font12 col9">可销售数量：' + item.rest_num + '</span>' +
+							'</p>' +
+							'</div>' +
+							'<div class="flex_aj">' +
+							'<label class="wh minus"><button class="font18">&minus;</button></label>' +
+							'<input class="font18 wh tac num" type="number" name="" value="' + item.cart_goods_num + '"  readonly/>' +
+							'<label class="wh add"><button class="font18">+</button></label>' +
+							'</div>' +
+							'</div>' +
+							'<div class="mt24 flex">' +
+							'<div class="flex1 flex flex_column">' +
+							'<p class="flex_a mb10"><img src="../img/r_icon0.png" alt="" style="width: 0.3rem;height: 0.3rem;margin-right: 5px;"/><span>实际库存</span></p>';
+						$.each(item.alreadyPutaway, function (inx, item) {
+							str += '<span class="font12 col9 mb10"><b>' + item.rest_num + '份</b>  <b class="mlr5">' + (item.placed ==
+								0 ? '计划上架' : '已经上架') + '</b>  <b>' + item.place_time + '分钟</b></span>';
+						});
+						str += '</div>' +
+							'<div class="flex1 flex flex_column bdl pl24">' +
+							'<p class="flex_a mb10"><img src="../img/r_icon1.png" alt="" style="width: 0.3rem;height: 0.3rem;margin-right: 5px;"/><span>预配送</span></p>';
+						$.each(item.planPutaway, function (inx, item) {
+							str += '<span class="font12 col9 mb10"><b>' + item.rest_num + '份</b>  <b class="mlr5">' + (item.placed ==
+								0 ? '计划上架' : '已经上架') + '</b>  <b>-' + item.place_time + '分钟</b></span>';
+						});
+						str += '</div>' +
+							'</div>' +
+							'</div>' +
+							'<div class="more bw flex_aj ptb30 today" data-goods_id=' + item.goods_id + '>' +
+							'<span>了解详情</span><img src="../img/r_more.png" style="width: 0.3rem;height: 0.3rem;" class="ml10"/>' +
+							'</div>' +
+							'</li>';
+					});
+				} catch (e) {}
+
+
+				if (str) {
+					$('.container').html(str);
+					totals();
+				} else {
+					$('.container').html(emptyTip('暂无商品'));
+				}
+			} else {
+				dlctipbox.show(res.msg);
+			}
+		});
+	}
+
+	function getList2() {
+		loadingShow();
+		dlc_request('/api/Goods/api', {
+			api_name: 'getShelfGoodsList',
+			cupboard_id: getUrlParam('id'),
+			pagesize: 999
+		}, function (res) {
+			console.log(res);
+			loadingHide();
+			var str = '';
+			if (res.code == '1') {
+				try {
+					$.each(res.data.list, function (inx, item) {
+						str += '<li class="mb20 bw plr24 list">' +
+							'<div class="ptb30 bdb">' +
+							'<div class="flex">' +
+							'<div class="flex flex1">' +
+							'<img src="' + item.cover_url + '" alt="" class="img mr15"/>' +
+							' <p class="flex flex_column">' +
+							' <span>' + item.title + '</span>' +
+							' <span class="mt20 mb10 col6">￥<span class="price">' + item.price + '</span></span>' +
+							'<span class="font12 col9">可销售数量：' + item.inventory_num + '</span>' +
+							'</p>' +
+							'</div>' +
+							'<div class="flex_aj">' +
+							' <label class="wh minus"><button class="font18">&minus;</button></label>' +
+							'<input class="font18 wh tac num" type="number" name="" value="' + item.cart_goods_num + '"  readonly/>' +
+							'<label class="wh add"><button class="font18">+</button></label>' +
+							'</div>' +
+							'</div>' +
+							'<div class="mt24 flex">' +
+							'<div class="flex1 flex flex_column">' +
+							'<p class="flex_a mb10"><img src="../img/r_icon0.png" alt="" style="width: 0.3rem;height: 0.3rem;margin-right: 5px;"/><span>实际库存</span></p>';
+						$.each(item.alreadyPutaway, function (inx, item) {
+							str += '<span class="font12 col9 mb10"><b>' + item.rest_num + '份</b>  <b class="mlr5">' + (item.placed ==
+								0 ? '计划上架' : '已经上架') + '</b>  <b>' + item.place_time + '分钟</b></span>';
+						});
+						str += '</div>' +
+							'</div>' +
+							'</div>' +
+							'<div class="more bw flex_aj ptb30 today" data-goods_id=' + item.goods_id + '>' +
+							'<span>了解详情</span><img src="../img/r_more.png" style="width: 0.3rem;height: 0.3rem;" class="ml10"/>' +
+							'</div>' +
+							'</li>';
+
+					});
+				} catch (e) {
+
+				}
+				if (str) {
+					$('.container').html(str);
+					totals();
+				} else {
+					$('.container').html(emptyTip('暂无商品'));
+				}
+			} else {
+				dlctipbox.show(res.msg);
+			}
+		});
+	}
+</script>

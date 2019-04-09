@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="../css/common.css" />
+  <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+</head>
+<style type="text/css">
+  .weui-cells {
+    margin-top: 1.17647059em;
+    background-color: #FFFFFF;
+    line-height: 1.47058824;
+    font-size: 17px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .weui-cells:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 1px;
+    border-top: 1px solid #e5e5e5;
+    color: #e5e5e5;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+    z-index: 2;
+  }
+
+
+
+  .weui-cell {
+    padding: 10px 15px;
+    position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+
+  .weui-cell_swiped {
+    display: block;
+    padding: 0;
+  }
+
+  .weui-cell_swiped>.weui-cell__bd {
+    position: relative;
+    z-index: 1;
+    background-color: #FFFFFF;
+  }
+
+  .weui-cell__bd {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+  }
+
+  .weui-cell_swiped>.weui-cell__ft {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    color: #FFFFFF;
+  }
+
+  .weui-cell__ft {
+    text-align: right;
+    color: #999999;
+  }
+
+  .weui-cell__ft {
+    text-align: right;
+    color: #999999;
+  }
+
+  .weui-swiped-btn_warn {
+    background-color: #FF3B30;
+  }
+
+  .weui-swiped-btn_default {
+    background-color: #C7C7CC;
+  }
+
+  .weui-swiped-btn {
+    display: block;
+    padding: 10px 1em;
+    line-height: 1.47058824;
+    color: inherit;
+  }
+
+  a {
+    text-decoration: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .weui-btn_primary:not(.weui-btn_disabled):visited {
+    color: #FFFFFF;
+  }
+
+  .weui-btn_primary {
+    background-color: #1AAD19;
+  }
+
+  .weui-btn {
+    position: relative;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 14px;
+    padding-right: 14px;
+    box-sizing: border-box;
+    font-size: 18px;
+    text-align: center;
+    text-decoration: none;
+    color: #FFFFFF;
+    line-height: 2.55555556;
+    border-radius: 5px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    overflow: hidden;
+    margin: 10px 0;
+  }
+</style>
+
+<body>
+  <header class='demos-header'>
+    <h1 class="demos-title">滑动删除</h1>
+  </header>
+
+  <div class="bd">
+    <div class="page__bd">
+      <div class="weui-cells">
+        <div class="weui-cell weui-cell_swiped" id="swipe1">
+          <div class="weui-cell__bd">
+            <div class="weui-cell">
+              <div class="weui-cell__bd">
+                <p>左滑列表</p>
+              </div>
+              <div class="weui-cell__ft">向左滑动试试</div>
+            </div>
+          </div>
+          <div class="weui-cell__ft">
+            <a class="weui-swiped-btn weui-swiped-btn_warn delete-swipeout" href="javascript:">删除</a>
+            <a class="weui-swiped-btn weui-swiped-btn_default close-swipeout" href="javascript:">关闭</a>
+          </div>
+        </div>
+        <div class="weui-cell weui-cell_swiped">
+          <div class="weui-cell__bd">
+            <div class="weui-cell">
+              <div class="weui-cell__bd">
+                <p>左滑列表</p>
+              </div>
+              <div class="weui-cell__ft">向左滑动试试</div>
+            </div>
+          </div>
+          <div class="weui-cell__ft">
+            <a class="weui-swiped-btn weui-swiped-btn_warn delete-swipeout" href="javascript:">删除</a>
+          </div>
+        </div>
+        <div class="weui-cell weui-cell_swiped">
+          <div class="weui-cell__bd">
+            <div class="weui-cell">
+              <div class="weui-cell__hd"></div>
+              <div class="weui-cell__bd">
+                <p>左滑列表</p>
+              </div>
+              <div class="weui-cell__ft">向左滑动试试</div>
+            </div>
+          </div>
+          <div class="weui-cell__ft">
+            <a class="weui-swiped-btn weui-swiped-btn_default close-swipeout" href="javascript:">取消关注</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  <header class='demos-header'>
+    <h1 class="demos-title">City Picker</h1>
+  </header>
+
+
+  <div class="weui-cells weui-cells_form">
+    <div class="weui-cell">
+      <div class="weui-cell__hd"><label for="name" class="weui-label">发出地</label></div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="start" type="text" value="湖北省 武汉市 武昌区">
+      </div>
+    </div>
+    <div class="weui-cell">
+      <div class="weui-cell__hd"><label for="date" class="weui-label">目的地</label></div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="end" type="text" value="">
+      </div>
+    </div>
+  </div>
+
+  <h2 class="demos-second-title">只选择城市</h2>
+  <div class="weui-cells weui-cells_form">
+    <div class="weui-cell">
+      <div class="weui-cell__hd"><label for="home-city" class="weui-label">城市</label></div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="home-city" type="text">
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a href="javascript:;" id='show-toast' class="weui-btn weui-btn_primary">显示 Toast 成功</a>
+  <a href="javascript:;" id='show-toast-cancel' class="weui-btn weui-btn_primary">显示 Toast 取消</a>
+  <a href="javascript:;" id='show-toast-forbidden' class="weui-btn weui-btn_primary">显示 Toast 禁止</a>
+  <a href="javascript:;" id='show-toast-text' class="weui-btn weui-btn_primary">显示 Toast 纯文本</a>
+  <a href="javascript:;" id='show-loading' class="weui-btn weui-btn_primary">显示 Loading</a>
+</body>
+
+</html>
+<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js?v=5.0" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
+<!--地址选择的时候-->
+
+<script>
+  isBinding();
+  //toast脚本
+  $(document).on("click", "#show-toast", function () {
+      $.toast("操作成功", function () {
+        console.log('close');
+      });
+    })
+    .on("click", "#show-toast-cancel", function () {
+      $.toast("取消操作", "cancel", function (toast) {
+        console.log(toast);
+      });
+    })
+    .on("click", "#show-toast-forbidden", function () {
+      $.toast("禁止操作", "forbidden");
+    })
+    .on("click", "#show-toast-text", function () {
+      $.toast("纯文本", "text");
+    })
+    .on("click", "#show-loading", function () {
+      $.showLoading();
+
+      setTimeout(function () {
+        $.hideLoading();
+      }, 3000)
+    });
+  // swipeout脚本
+  $('.delete-swipeout').click(function () {
+    $(this).parents('.weui-cell').remove()
+  })
+  $('.close-swipeout').click(function () {
+    $(this).parents('.weui-cell').swipeout('close')
+  })
+  $("#swipe1").click(function () {
+    console.log('click')
+  })
+
+
+  //地址选择脚本
+  $("#start").cityPicker({
+    title: "选择出发地",
+    onChange: function (picker, values, displayValues) {
+      console.log(values, displayValues);
+    }
+  });
+  $("#end").cityPicker({
+    title: "选择目的地"
+  });
+  $("#home-city").cityPicker({
+    title: "选择目的地",
+    showDistrict: false,
+    onChange: function (picker, values, displayValues) {
+      console.log(values, displayValues);
+    }
+  });
+</script>

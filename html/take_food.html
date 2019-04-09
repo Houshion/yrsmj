@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>取餐</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/main.css" />
+    <style>
+    </style>
+</head>
+
+<body>
+    <article class="bigBox take_page">
+        <section class="container">
+            <div class="flex_a ptb20 plr24 bw" id="shop">
+                <!-- <div>
+                    <img src="../img/img0.png" class="food_pic">
+                </div>
+                <div class="flex1 ml20">
+                    <p class="font16">添添聚源味自动售卖机</p>
+                    <p class="mt10 col9">东莞市南城区周溪</p>
+                </div> -->
+            </div>
+            <ul class="user_food goodsList">
+                <!-- <li class="user_item pb40 bw">
+                    <div class="ptb30 bw plr24 mt20">
+                        <p>13632347040用户</p>
+                        <p class="mt10 col6">当前可取餐<span class="col3">3</span>份</p>
+                    </div>
+                    <ul class="plr24 bgce">
+                        <li class="food_item">
+                            <label class="flex_sb h100">
+                                <div class="flex_a font14">
+                                    <input type="checkbox" name="food" value="1" checked>
+                                    <span class="checkbox_bg flex_aj"></span>
+                                    <div class="col6 ml20">
+                                        <span>招牌番茄鸡排饭</span>
+                                        <cite class="ml20">1份</cite>
+                                    </div>
+                                </div>
+                                <span class="arrow_right ml20 color2">已送达</span>
+                            </label>
+                        </li>
+                        <li class="food_item">
+                            <label class="flex_sb h100">
+                                <div class="flex_a font14">
+                                    <input type="checkbox" name="food" value="2" checked>
+                                    <span class="checkbox_bg flex_aj"></span>
+                                    <div class="col6 ml20">
+                                        <span>招牌番茄鸡排饭</span>
+                                        <cite class="ml20">1份</cite>
+                                    </div>
+                                </div>
+                                <span class="arrow_right ml20 color1">未送达</span>
+                            </label>
+                        </li>
+                    </ul>
+                </li> -->
+            </ul>
+            <label class="flex_sb h100 plr24 bw mt20" id="all">
+                <div class="flex_a font14">
+                    <input type="checkbox" name="is_all" value="1" checked onchange="is_all(this)">
+                    <span class="checkbox_bg flex_aj"></span>
+                    <div class="col6 ml20">
+                        <span>全部取餐</span>
+                    </div>
+                </div>
+            </label>
+        </section>
+        <section class="plr24 bw mt20">
+            <p class="tac font13 col9 lh80">请输入对方取餐码帮忙取餐</p>
+            <div class="plr40 flex">
+                <!-- 添加输入框正则判断只填写数字并限制6位长度 -->
+                <input type="text" class="flex1 h100 bgce plr24 border-r1 tac code" maxlength="6" placeholder="请输入取餐码"
+                    onkeyup="this.value=this.value.replace(/[^0-9]/g,'')">
+                <!-- <input type="text" class="flex1 h100 bgce plr24 border-r1" placeholder="请输入取餐码"> -->
+            </div>
+            <div class="plr24 ptb40">
+                <button class="btn_tap bgc1 font16 colw w100 lh90 border-r6" id="btn">确定</button>
+            </div>
+        </section>
+    </article>
+    <section class="mask_tip dpn">
+        <div class="msg">
+            <p class="font17">提示</p>
+            <p class="mt40 message">尊敬的用户，您的编号134601号餐在501号餐柜，仓门已打开请取餐</p>
+            <a class="min_btn bgc1">倒计时
+                <span>180</span>秒</a>
+        </div>
+    </section>
+</body>
+
+</html>
+<script src="../js/jquery-1.8.3.min.js"></script>
+<script src="../js/dlc.js?v=5.0"></script>
+<script src="../js/layer.js"></script>
+<script>
+    isBinding();
+
+    /** 
+     * By Ocean start
+     **/
+    var intervalTips = false, //提示语
+        interval1, interval2, index = 0;
+    var phone;
+    var getOrderIdsArray = [];
+
+    // 获取对方取餐码帮取餐
+    $("input.code").blur(function () {
+
+        var code = $(this).val(); //取餐码，帮别人取餐
+		if($('.food_item[data-code=' + code + ']').length > 0)return;
+        dlc_request('/api/Cupboard/api', {
+            'api_name': 'takeFoodList',
+            'cupboard_id': getUrlParam('cupboard_id'),
+            'openid': user_token(),
+            'code': code
+        }, function (res) {
+            // console.log(JSON.stringify(res));
+            if (res.code == 1) {
+
+				$('#shop').html('<div>' +
+					'<img src="' + res.data.seller_logo + '" class="food_pic">' +
+					'</div>' +
+					'<div class="flex1 ml20">' +
+					'<p class="font16">' + res.data.cupboard_title + '</p>' +
+					'<p class="mt10 col9">' + res.data.cupboard_address + '</p>' +
+					'</div>');
+
+                var goodsList = res.data.goods_list;
+                var goods = goodsList.goods;
+                var str = '',
+                    input = '',
+                    color = 'color2';
+
+                for (var i in goods) {
+
+                    if (goods[i].status == "未送达") color = "color1";
+
+                    if (goods[i].input_num > 0) {
+                        console.log(goods[i].status)
+                        input = '<input type="checkbox" name="food"' +
+                            ' data_oid="' + goods[i].son_oid + '" ' +
+                            '" checked>';
+                    }
+
+                    str += '<li class="food_item" data-code="' + code + '">' +
+                        '<label class="flex_sb h100" style="padding: 0 10px;">' +
+                        '<div class="flex_a font14">' + input +
+                        '<span class="checkbox_bg flex_aj"></span>' +
+                        '<div class="col6 ml20">' +
+                        '<span>' + goods[i].goods_title + '</span>' +
+                        '<cite class="ml20">' + goods[i].input_num + '份</cite>' +
+                        '</div>' +
+                        '</div>' +
+                        '<span class="arrow_right ml20 ' + color + '">' + goods[i].status + '</span>' +
+                        '</label>' +
+                        '</li>';
+                }
+                if (goodsList.phone != phone) {
+                    $(".goodsList").append(str)
+                }
+            } else {
+                layer_msg(res.msg);
+            }
+        });
+    })
+    // 开门取餐
+    $('#btn').click(function () {
+
+
+        var orderIdsArray = []; //商品订单id数组
+        $("input[name=food]").each(function () {
+            var _this = $(this);
+            if (_this.is(':checked')) {
+                orderIdsArray.push(_this.attr('data_oid'));
+            }
+        });
+
+        $.showLoading();
+        if (orderIdsArray.length > 0) {
+            // layer_msg('所有编号:'+ orderIdsArray);
+            getOrderIdsArray = orderIdsArray; //缓存全局的取餐编号
+            // return;
+            openDoor();
+        } else {
+            layer_msg("请选择您要取的商品");
+            $.hideLoading();
+        }
+    });
+
+    //打开某个格子 以取餐
+    function openDoor() {
+        var son_oid = getOrderIdsArray[0]; //打开当前第一个格子
+        dlc_request('/api/Cupboard/api', {
+            'api_name': 'openLuncnBox',
+            'cupboard_id': getUrlParam('cupboard_id'),
+            'son_oid': son_oid,
+            'openid': user_token()
+        }, function (res) {
+            console.log(res)
+            $.hideLoading();
+            if (res.code == 1) {
+                getTip(res.msg); //显示提示语
+                var box_number = res.data.box_number;
+                checkEmpty(box_number.join(',')) //判断是否为空
+            } else {
+                layer_msg(res.msg);
+            }
+        });
+    }
+    //检测订单是否还有未取餐的商品
+    function checkOrderNoGetAll() {
+        var son_oid = getOrderIdsArray[0]; //检测当前第一个格子
+        dlc_request('/api/Cupboard/api', {
+            'api_name': 'checkOrderNoGetAll',
+            'cupboard_id': getUrlParam('cupboard_id'),
+            'son_oid': son_oid,
+            'openid': user_token()
+        }, function (res) {
+            $.hideLoading();
+            if (res.msg == 'no_finish') { //当前订单未取完 继续开门
+                openDoor();
+            } else { //当前订单已经取完 到下一个订单
+                getOrderIdsArray.splice(0, 1);
+                if (getOrderIdsArray.length > 0) {
+                    getTip("您还有：" + getOrderIdsArray.length + "个格子未取餐"); // 修改弹窗提示语
+                    openDoor();
+                } else {
+                    $('.mask_tip').hide();
+                    layer_msg("所有物品已取出"); // 修改弹窗提示语
+                    window.location.reload();
+                }
+            }
+        });
+    }
+
+    //检测格子是否为空
+    function checkEmpty(openNumber) {
+        dlc_request('/api/Box/api', {
+            api_name: 'checkBoxEmpty',
+            cupboard_id: getUrlParam('cupboard_id'),
+            box_number: openNumber // 格子号
+        }, function (data) {
+            if (data.code == 1 && data.msg != "") {
+                var emptyNumber = data.msg;
+                checkClose(emptyNumber); //检测格子是否关闭
+            } else {
+                //重新检测格子是否为空
+                setTimeout(function () {
+                    checkEmpty(openNumber);
+                }, 2000);
+            }
+        });
+    }
+
+    function checkClose(emptyNumber) {
+        getTip(emptyNumber + "号柜子餐盒已取，请关门") // 修改弹窗提示语
+        interval2 = setInterval(() => { // 判断格子是否关闭
+            dlc_request('/api/Box/api', {
+                api_name: 'checkBoxClosed',
+                cupboard_id: getUrlParam('cupboard_id'),
+                box_number: emptyNumber.join(",")
+            }, function (dataS) {
+                if (dataS.code == 1 && dataS.msg != "") {
+                    // layer_msg("状态---" + res.msg);
+                    // 关门则停止轮循检查、停止倒计时，并关闭提示
+                    clearInterval(intervalTips);
+                    clearInterval(interval2);
+                    var closeNumber = dataS.msg;
+                    layer_msg(closeNumber + "号柜子已关闭");
+                    checkOrderNoGetAll(); //检测当前的订单是否还有商品未取完
+                } else {
+
+                }
+            });
+        }, 5000);
+    }
+
+    function getTip(message) {
+        if (intervalTips) {
+            clearInterval(intervalTips);
+        }
+        $('.mask_tip').show();
+        $(".message").text(message);
+
+        var time = 180;
+
+        // 倒计时180秒
+        intervalTips = setInterval(function () {
+            $(".min_btn span").text(time);
+            time--;
+            if (time <= 0) {
+                clearInterval(intervalTips);
+                $('.mask_tip').hide();
+            }
+        }, 1000);
+
+        $(".min_btn").on("click", function () {
+            clearInterval(intervalTips);
+            $('.mask_tip').hide();
+            window.location.reload();
+        })
+    }
+
+    function ajaxPost(Param, callback) {
+        $.ajax({
+            type: "POST",
+            url: "http://yrshoumaiji.app.xiaozhuschool.com/api/Cupboard/api", // ajax请求路径
+            dataType: "JSON",
+            data: Param,
+            async: false, //同步执行
+            success: function (data) {
+                callback(data);
+            },
+            error: function (errorThrown) {
+                error("数据处理出错，请及时联系开发人员");
+                console.log(errorThrown)
+            }
+        })
+    }
+
+    /** 
+     * By Ocean end
+     **/
+
+    function is_all(that) { //是否全选
+        if ($(that).is(':checked')) {
+            $('input[name=food]').prop('checked', true);
+        } else {
+            $('input[name=food]').prop('checked', false);
+        }
+    }
+    $('input[name=food]').on('change', function () {
+        var is_all = 1;
+        $('input[name=food]').each(function () {
+            if (!$(this).is(':checked')) {
+                is_all = 0;
+                return false;
+            }
+        });
+        if (is_all) {
+            $('input[name=is_all]').prop('checked', true);
+        } else {
+            $('input[name=is_all]').prop('checked', false);
+        }
+    });
+
+    dlc_request('/api/Cupboard/api', {
+        'api_name': 'takeFoodList',
+        'cupboard_id': getUrlParam('cupboard_id'),
+        'openid': user_token()
+    }, function (res) {
+        console.log(JSON.stringify(res));
+        if (res.code == 1) {
+            $('#shop').html('<div>' +
+                '<img src="' + res.data.seller_logo + '" class="food_pic">' +
+                '</div>' +
+                '<div class="flex1 ml20">' +
+                '<p class="font16">' + res.data.cupboard_title + '</p>' +
+                '<p class="mt10 col9">' + res.data.cupboard_address + '</p>' +
+                '</div>');
+
+            /** 
+             * by Ocean strat
+             **/
+
+            var goodsList = res.data.goods_list;
+            var goods = goodsList.goods;
+            var str = '',
+                input = '',
+                color = 'color2';
+
+            if (goodsList.good_meal <= 0) {
+                // $("#all").hide(); // 没有可取餐时隐藏全选
+            }
+
+            phone = goodsList.phone;
+
+            $(".user_food").html(
+                '<li class="user_item pb40 bw">' +
+                '<div class="ptb30 bw plr24 mt20">' +
+                '<p>' + goodsList.phone + '</p>' +
+                '<p class="mt10 col6">当前可取餐<span class="col3">' + goodsList.good_meal + '</span>份</p>' +
+                '</div>' +
+                //'<ul class="plr24 bgce goodsList">' +
+                //'</ul>' +
+                '</li>'
+            );
+
+            for (var i in goods) {
+
+
+                if (goods[i].status == "未送达") color = "color1";
+
+                if (goods[i].input_num > 0) {
+                    console.log(goods[i].status)
+                    input = '<input type="checkbox" name="food" ' +
+                        ' data_oid="' + goods[i].son_oid + '" ' +
+                        '" checked>';
+                }
+
+                str += '<li class="food_item">' +
+                    '<label class="flex_sb h100" style="padding: 0 10px;">' +
+                    '<div class="flex_a font14">' + input + '<span class="checkbox_bg flex_aj"></span>' +
+                    '<div class="col6 ml20">' +
+                    '<span>' + goods[i].goods_title + '</span>' +
+                    '<cite class="ml20">' + goods[i].input_num + '份</cite>' +
+                    '</div>' +
+                    '</div>' +
+                    '<span class="arrow_right ml20 ' + color + '">' + goods[i].status + '</span>' +
+                    '</label>' +
+                    '</li>';
+            }
+
+            $(".goodsList").append(str)
+
+            /** 
+             * by Ocean end
+             **/
+
+        }
+    });
+</script>

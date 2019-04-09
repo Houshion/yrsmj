@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>评价</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no"/>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/common.css"/>
+    <link rel="stylesheet" href="../css/main.css"/>
+    <style>
+        .text{height: 1.6rem;width: 100%;}
+    </style>
+</head>
+<body class="evaluate">
+    <article>
+        <form  action="" enctype="multipart/form-data" method="post" name="form" id="form">
+            <div class="flex_a ptb20 plr24 bw title">
+                <!-- <div>
+                    <img src="../img/img0.png" class="food_pic">
+                </div>
+                <div class="flex1 ml20">
+                    <p class="font16">添添聚源味自动售卖机</p>
+                    <p class="mt10 col9">东莞市南城区周溪</p>
+                </div> -->
+            </div>
+            <div class="mt20 bw">
+                <p class="col9 bdb plr24 lh80 orderNum">订单编号: <span></span></p>
+                <ul class="plr24">
+                    <li class="flex_sb h100 bdb">
+                        <span class="name">订餐体验</span>
+                        <div class="evaluate_level">
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <input type="hidden" hidden name="book_stars" />
+                        </div>
+                        <cite>10</cite>
+                    </li>
+                    <li class="flex_sb h100 bdb">
+                        <span class="name">取餐体验</span>
+                        <div class="evaluate_level">
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <input type="hidden" hidden name="take_stars" />
+                        </div>
+                        <cite>10</cite>
+                    </li>
+                    <li class="flex_sb h100 bdb">
+                        <span class="name">产品价格</span>
+                        <div class="evaluate_level">
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <input type="hidden" hidden name="price_stars" />
+                        </div>
+                        <cite>10</cite>
+                    </li>
+                    <li class="flex_sb h100">
+                        <span class="name">产品质量</span>
+                        <div class="evaluate_level">
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <span><img src="../img/star_a.png"/></span>
+                            <input type="hidden" hidden name="quality_stars" />
+                        </div>
+                        <cite>10</cite>
+                    </li>
+                </ul>
+            </div>
+            <div style="font-size: 0;" class="bw mt20">
+                <textarea name="memo" id="" cols="30" rows="10" class="text plr24 ptb20" placeholder="请留下您的评价内容，分享给大家"></textarea>
+                <div class="pic_box" id="pic_box">
+                    <label class="a-upload" class="fl" style="position: relative;">
+                        <input type="file" name="img[]" class="upLoadImg" onchange="upLoadImg(this,'pic_box',4)" hidden/>
+                    </label>
+                </div>
+            </div>
+            <input type="hidden" hidden name="api_name" value="comment_submit">
+            <input type="hidden" hidden name="order_id" value="">
+            <input type="hidden" hidden name="openid" value="">
+        </form>
+        <div class="plr24 mt50 mb20">
+            <button class="btn_tap bgc1 font16 colw w100 lh90 border-r6" id="btn">确定</button>
+        </div>
+    </article>
+</body>
+</html>
+<script src="../js/jquery-1.8.3.min.js"></script>
+<script src="../js/dlc.js?v=5.0"></script>
+<script src="../js/layer.js"></script>
+<script src="../js/jquery.form.js"></script>
+<script>
+    isBinding();
+
+    $('.evaluate_level span').on('click', function () {
+        $(this).html('<img src="../img/star_a.png"/>').prevAll().html('<img src="../img/star_a.png"/>').end().nextAll().html('<img src="../img/star_h.png"/>');
+        $(this).parent().next().text(($(this).index() + 1)*2);
+        $(this).nextAll('input').val(($(this).index() + 1)*2);
+    });
+    form.book_stars.value = 10;
+    form.take_stars.value = 10;
+    form.price_stars.value = 10;
+    form.quality_stars.value = 10;
+    form.openid.value = user_token();
+    form.order_id.value = getUrlParam('order_id');// by ocean
+    var onOff = 0;
+    $('#btn').on('click',function(){
+        $('#form').ajaxSubmit({
+            url:dlcUrl()+'/api/Comment/api',
+            type : 'POST',
+            dataType:  'json',
+            beforeSubmit:function(){
+                var memo = form.memo.value;
+                if(isNull(memo)) {
+                    dlctipbox.show('请输入评价内容！');
+                    return false;
+                } else if(memo.length < 10) {
+                    dlctipbox.show('评价至少10个字');
+                    return false;
+                }else{
+                    if(onOff){return false;}onOff=1;
+                    $.showLoading('正在上传..');
+                }
+            },
+            success: function(res){
+                console.log(res);
+                $.hideLoading();
+                if(res.code==1){
+                    dlctipbox.confirm_img(res.msg,function(index){
+                        if(index == 1){// 返回订单
+                            window.history.go(-1);
+                        }else{//查看积分
+                            location.href = "./y_integral.html";
+                        }
+                    },'您当前评价获得积分10分');
+                    // 30秒倒计时，无操作直接返回首页
+                    var time = 30;
+                    var Interval1 = setInterval(() => {
+                        if(time <= 0){
+                            window.history.go(-1);// 返回订单
+                        }
+                        time--;
+                    },1000);
+                }else{
+                    onOff=0;
+                    layer_msg(res.msg);
+                }
+            },
+            error: function(err){
+                onOff = 0;
+                $.hideLoading();
+                console.log(JSON.stringify(err));
+            }
+        });
+    });
+
+    /*
+     * by Ocean start
+     */
+     dlc_request('/api/Comment/api',{'api_name':'comment_page','order_id':getUrlParam('order_id'),'openid':user_token()},function(res){
+        if(res.code == 1){
+            $(".title").html(
+                '<div>'+
+                    '<img src="'+res.data.seller_headimg+'" class="food_pic">'+
+                '</div>'+
+                '<div class="flex1 ml20">'+
+                    '<p class="font16">'+res.data.title+'</p>'+
+                    '<p class="mt10 col9">'+res.data.address+'</p>'+
+                '</div>'
+            );
+            $(".orderNum span").text(res.data.order_number);
+        }
+     });
+    /*
+     * by Ocean end
+     */
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>自动售卖机</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no"/>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/common.css"/>
+    <link rel="stylesheet" href="../css/main.css"/>
+    <style>
+        img{max-width: none;}
+    </style>
+</head>
+<body>
+    <article class="index2_page pt20">
+        <section class="bw ptb30">
+            <p class="tac font16" id="cupboard_title"></p>
+            <p class="tac col9 mt10" id="cupboard_address"></p>
+            <div class="flex mt20">
+                <div class="flex1 tac">
+                    <p style="height: .3rem;">
+                        <img src="../img/icon4.png" style="width: 1.5rem;">
+                    </p>
+                    <p class="mt10" id="seller_comments"></p>
+                </div>
+                <div class="flex1 tac bdl flex_a flex_column">
+                    <div class="starBar pos_r">
+                        <!--<span><img src="../img/icon5.png"></span>-->
+                        <!--<span><img src="../img/icon6.png"></span>-->
+                    </div>
+                    <p class="mt40" id="seller_starts">10.0</p>
+                </div>
+            </div>
+        </section>
+        <section class="nav clearfix mt20">
+            <a class="nav_item tac flex_aj flex_column bdb bw tap" onclick="nav(1)">
+                <div>
+                    <img src="../img/icon1.png" style="width: 1.9rem;">
+                </div>
+                <p class="col9 font16 mt20">取餐</p>
+            </a>
+            <a class="nav_item tac flex_aj flex_column bdl bw tap" onclick="nav(2)">
+                <div>
+                    <img src="../img/icon2.png" style="width: 1.9rem;">
+                </div>
+                <p class="col9 font16 mt20">订餐</p>
+            </a>
+            <a class="nav_item tac flex_aj flex_column bw tap" onclick="nav(3)">
+                <div>
+                    <img src="../img/icon3.png" style="width: 1.9rem;">
+                </div>
+                <p class="col9 font16 mt20">还餐</p>
+            </a>
+        </section>
+    </article>
+</body>
+</html>
+<script src="../js/jquery-1.8.3.min.js"></script>
+<script src="../js/dlc.js?v=5.0"></script>
+<script>
+    isBinding();
+
+    var cupboard_id,seller_id;
+    dlc_request('/api/Cupboard/api',{'api_name':'richScanCupboardHome','device_number':getUrlParam('id')},function(res){
+        console.log(res);
+        if(res.code == 1){
+            var res = res.data;
+            cupboard_id = res.cupboard_id;
+            seller_id=res.seller_id;
+            $('#cupboard_title').text(res.cupboard_title);
+            $('#cupboard_address').text(res.cupboard_address);
+            $('#seller_starts').text(res.seller_starts);
+            $('#seller_comments').text(res.seller_comments>999?(res.seller_comments+'+'):res.seller_comments);
+            $('.starBar').html('<span style="width:'+res.seller_starts/10*100+'%"><img src="../img/icon5.png"></span>'+
+                    '<span><img src="../img/icon6.png"></span>');
+        }
+    });
+    function nav(type){
+        if(cupboard_id){
+            switch (type){
+                case 1://取餐
+                    location.href = './take_food.html?cupboard_id='+cupboard_id;
+                    break;
+                case 2://订餐
+                    location.href = './r_today.html?id='+cupboard_id+'&type=3'+'&seller_id='+seller_id;
+                    break;
+                case 3://还餐
+                    location.href = './also_boxes.html?cupboard_id='+cupboard_id;
+                    break;
+            }
+        }
+
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

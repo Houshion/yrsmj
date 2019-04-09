@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>所有评价</title>
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+	</head>
+	<style type="text/css">
+		.star img{
+			width: 0.22rem;height: 0.22rem;	margin:0 2px;
+		}
+		.star b{font-size: 0.24rem;}
+		.activ{
+			border-bottom: 2px solid #f79e20;
+			color: #f79e20;
+			
+		}
+		.pic img{width: 1.5rem;height: 1.3rem;margin-right: 0.2rem;margin-bottom: 0.2rem;}
+	</style>
+	<body>
+		<header class="bw ptb30">
+				<p class="tac">
+					<span class="font12 col9">总评</span>
+					<span class="font24 starts">0.0</span>
+				</p>
+				<p class="star flex_aj mt10">
+					<img src="../img/star_on.png" alt="" />
+					<img src="../img/star_on.png" alt="" />
+					<img src="../img/star_on.png" alt="" />
+					<img src="../img/star_on.png" alt="" />
+					<img src="../img/star_on.png" alt="" />
+				</p>
+		</header>
+		<nav class="flex_aj bw mt20 bdb">
+			<a class="flex_aj flex1"><span class="ptb20 activ">全部</span></a>
+			<i class="line_col"></i>
+			<a class="flex_aj flex1"><span class="ptb20">有图</span></a>
+		</nav>
+		<ul>
+			<!--<li class="bw bdb  pt30 pb20 plr20">
+				<div class="state flex_sb ">
+					<p class="flex_a">
+						<img src="../img/r_avatar.png" alt="" style="width: 0.5rem;height: 0.5rem;"/>
+						<span>OK先生</span>
+					</p>
+					<p class="star flex_aj">
+						<img src="../img/star_on.png" alt="" />
+						<img src="../img/star_on.png" alt="" />
+						<img src="../img/star_on.png" alt="" />
+						<img src="../img/star_on.png" alt="" />
+						<img src="../img/star_on.png" alt="" />
+					</p>
+					<p>2017-12-16  12:00</p>
+				</div>
+				<p class="tit mt24 mb25">干净卫生，味道还不错，希望保持，继续支持你！</p>
+				<div id="pic">
+					<img src="../img/img0.png" alt="" />
+					<img src="../img/img0.png" alt="" />
+					<img src="../img/img0.png" alt="" />
+					<img src="../img/img0.png" alt="" />
+					<img src="../img/img0.png" alt="" />
+					<img src="../img/img0.png" alt="" />
+				</div>
+			</li>-->
+		</ul>
+	</body>
+</html>
+<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js?v=5.0" type="text/javascript" charset="utf-8"></script>
+<script src="../js/Unix.js" type="text/javascript" charset="utf-8"></script>
+<script>
+	isBinding();
+	
+	$('nav').on('click','a',function(){
+		$(this).find('span').addClass('activ').parent().siblings().find('span').removeClass('activ');
+		$('ul').children().remove();
+		type($(this).index())
+	});
+	
+	
+	type(0);
+function type(type){
+	dlc_request('/api/Cupboard/api',{api_name:'sellerAppraiseList',seller_id:getUrlParam('id'),openid:localStorage.getItem('token'),type:type},function(res){
+		console.log(res);
+		if(res.data.commentList.length==0){
+		    $('ul').html(emptyTip('暂无评价'));
+		}
+		$('.starts').text(res.data.starts);
+		for(i in res.data.commentList){
+			$('ul').append('<li class="bw bdb  pt30 pb20 plr20">'+
+				'<div class="state flex_sb ">'+
+					'<p class="flex_a">'+
+						'<img src="'+res.data.commentList[i].user_avater+'" alt="" style="width: 0.5rem;height: 0.5rem;border-radius: 2rem;margin-right: 5px;"/>'+
+						'<span>'+res.data.commentList[i].user_nickname+'</span>'+
+					'</p>'+
+					'<p class="star flex_aj" data-id="'+res.data.commentList[i].user_starts+'">'+
+						'<img src="../img/star_on.png" alt="" />'+
+						'<img src="../img/star_on.png" alt="" />'+
+						'<img src="../img/star_on.png" alt="" />'+
+						'<img src="../img/star_on.png" alt="" />'+
+						'<img src="../img/star_on.png" alt="" />'+
+					'</p>'+
+					'<p>'+date('Y-m-d H:i',res.data.commentList[i].ctime)+'</p>'+
+				'</div>'+
+				'<p class="tit mt24 mb25">'+res.data.commentList[i].memo+'</p>'+
+				(res.data.commentList[i].img.length!=0?'<div class="pic"></div>':'')+
+			'</li>');
+			//console.log(res.data.commentList[i].img)
+			
+			if(res.data.commentList[i].img.length!=0){
+				for(j in res.data.commentList[i].img){
+					///console.log(res.data.commentList[i].img[j])
+					//$('ul li').append('<div id="pic"></div>')
+					$('ul li').eq(i).find('.pic').append('<img src="'+res.data.commentList[i].img[j]+'" alt="" />')
+				}   
+			}
+		}
+	})
+}
+	
+      
+
+</script>

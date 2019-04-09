@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>提交订单</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/zy_common.css" />
+    <link rel="stylesheet" href="../css/zy_base.css" />
+    <link rel="stylesheet" href="../js/mobiscroll/mobiscroll.jquery.min.css" />
+    <style>
+        .mbsc-sc-whl-w{
+            max-width: 100%;
+            position: relative;
+        }
+        .mbsc-mobiscroll .r{
+            color: #f79e20;
+        }
+        .mbsc-mobiscroll .l{
+            color: #999;
+        }
+        .mbsc-mobiscroll .mbsc-sc-whl-l {
+            border-top: 1px solid #dcdcdc;
+            border-bottom: 1px solid #dcdcdc;
+        }
+        .mbsc-mobiscroll .mbsc-sc-itm {
+            font-size: .3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmBox">
+        <div class="confirmList bgf marginBottom-20">
+            <!--<ul>-->
+                <!--<li class="paddingTB-4 flex marginLR-24 relative">-->
+                    <!--<img src="../img/img0.png" alt="">-->
+                    <!--<div class="marginLeft-30">-->
+                        <!--<p class="font-15 color-333 marginBottom-10">招牌番茄鸡排饭</p>-->
+                        <!--<p class="font-14 color-666 marginBottom-10">￥<span class="price">26.00</span></p>-->
+                        <!--<p class="font-14 color-999">单点</p>-->
+                    <!--</div>-->
+                    <!--<div class="flex handleBox">-->
+                        <!--<label class="btnBox minus"><button class="font-18 color-666">−</button></label>-->
+                        <!--<input class="font-18 btnBox text-center num" type="number" name="" value="1">-->
+                        <!--<label class="btnBox add"><button class="font-18 color-666">+</button></label>-->
+                    <!--</div>-->
+                <!--</li>-->
+                <!--<li class="paddingTB-4 flex marginLR-24 relative">-->
+                    <!--<img src="../img/img0.png" alt="">-->
+                    <!--<div class="marginLeft-30">-->
+                        <!--<p class="font-15 color-333 marginBottom-10">可乐鸡翅+时令蔬菜+老火炖汤+米饭</p>-->
+                        <!--<p class="font-14 color-666 marginBottom-10">￥<span class="price">26.00</span></p>-->
+                        <!--<p class="font-14 color-999">超值套餐</p>-->
+                    <!--</div>-->
+                    <!--<div class="flex handleBox">-->
+                        <!--<label class="btnBox minus"><button class="font-18 color-666">−</button></label>-->
+                        <!--<input class="font-18 btnBox text-center num" type="number" name="" value="1">-->
+                        <!--<label class="btnBox add"><button class="font-18 color-666">+</button></label>-->
+                    <!--</div>-->
+                <!--</li>-->
+            <!--</ul>-->
+            <div class="font-15 color-999 border-top paddingLR-24 text-right sumBox">
+                <em class="marginRight-30 total_num"></em>
+                <em>小计：<span class="color2 sum_price"></span></em>
+            </div>
+        </div>
+        <div class="row-1 LR-block marginBottom-20 paddingLR-24 font-15 color-333" id="appointTime" style="display: none;">
+            <span>预订时间</span>
+            <em class="flex-center">
+                <input type="text" value=""   autocomplete="off" readonly style="width: 5rem;"/>
+                <img src="../img/y_arrow_right.png" alt="" class="arrow-r marginLeft-20">
+            </em>
+        </div>
+        <div class="choseBox bgf font-15">
+            <div class="LR-block marginLR-24">
+                <label class="flex-center row-15">
+                    <input type="checkbox"  value="1" class="check" hidden>
+                    <span class="roundBox"></span>
+                    <div class="marginLeft-20 color-999">
+                        <p>积分抵现</p>
+                        <p class="font-14">(你还剩 <span id="user_score"></span>分)</p>
+                    </div>
+                </label>
+                <em class="color-666">本订单所需积分<span class="color1" id="order_score"></span>分</em>
+            </div>
+            <div class="LR-block marginLR-24" >
+                <label class="flex-center row-1">
+                    <input type="checkbox"   value="2" class="check" hidden>
+                    <span class="roundBox"></span>
+                    <div class="marginLeft-20 color-333">
+                        <p>发票</p>
+                    </div>
+                </label>
+                <em class="color-666 flex-center row-1" onclick="location.href='invoice.html';">完善发票信息 <img src="../img/y_arrow_right.png" alt="" class="arrow-r marginLeft-30"></em>
+            </div>
+        </div>
+    </div>
+    <section class="confirmOrder">
+        <div class="flex-1 text-right bgf font-15 paddingRight-30 color-999">合计： <span class="font-16 color2" id="total"></span><span  class="font-15 color2" id="vipBox" style="display: none;"></span></div>
+        <div class="confirmBtn text-center color-fff  font-16">提交订单</div>
+    </section>
+</body>
+</html>
+<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js?v=5.0" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="../js/mobiscroll/mobiscroll.jquery.min.js"></script>
+<script>
+    isBinding();
+
+    var discount,user_score,order_score,invoice_id,off=1,score_rate;
+    var arr_id=[];
+    var sTime;
+    $(function () {
+        addEventback();//监听返回刷新
+        if(getCookie('invoice_id')){
+            $('.check').eq(1).attr('checked',true);
+        }
+        if(getUrlParam('type')==1){
+            $('#appointTime').css('display','flex');
+        }
+        //获取详情
+        loadingShow();
+        dlc_request('/api/Order/api',{api_name:'closeGoodsList',cupboard_id:getUrlParam('cupboard_id'),goods_id:getUrlParam('goods_id'),goods_type:getUrlParam('type'),cart_id:getUrlParam('cart_id')?getUrlParam('cart_id'):''},function(res) {
+            console.log(res);
+            loadingHide();
+            var str = '';
+            if (res.code == '1') {
+				if(res.data.goods_info.length <= 0){
+					location.replace('/h5/html/r_booking.html?id=' + getUrlParam('cupboard_id') + '&seller_id=' + getUrlParam('seller_id') + '&type=' + getUrlParam('type'));
+				}
+				
+                str+='<ul>';
+                $.each(res.data.goods_info,function (inx,item) {
+                    arr_id.push(item.cart_id);
+                    str+= '<li class="paddingTB-4 flex marginLR-24 relative" data-goods_id="'+item.goods_id+'">'+
+                            '<img src="'+item.cover_url+'" alt="">'+
+                            '<div class="marginLeft-30">'+
+                            '<p class="font-15 color-333 marginBottom-10">'+item.title+'</p>'+
+                            '<p class="font-14 color-666 marginBottom-10">￥<span class="price">'+item.price+'</span></p>'+
+                        '<p class="font-14 color-999">'+item.type_title+'</p>'+
+                            '</div>'+
+                            '<div class="flex handleBox">'+
+                            '<label class="btnBox minus"><button class="font-18 color-666">−</button></label>'+
+                        '<input class="font-18 btnBox text-center num" type="number" name="" value="'+item.num+'" readonly>'+
+                            '<label class="btnBox add"><button class="font-18 color-666">+</button></label>'+
+                        '</div>'+
+                        '</li>';
+                });
+                str+='</ul>';
+                str+= '<div class="font-15 color-999 border-top paddingLR-24 text-right sumBox">'+
+                        '<em class="marginRight-30 total_num">共'+res.data.goods_num+'件商品</em>'+
+                        '<em>小计：<span class="color2 sum_price">￥'+res.data.money.toFixed(2)+'</span></em>'+
+                    '</div>';
+                if(str){
+                    $('.confirmList').html(str);
+                    discount=res.data.discount;
+                    user_score=res.data.user_score;
+                    order_score=res.data.order_score;
+                    score_rate=Number(res.data.score_rate)*100;
+                    $('#total').text('￥'+res.data.total.toFixed(2));
+                    $('#user_score').text(user_score);
+                    $('#order_score').text(Number(order_score).toFixed(0));
+                    if(discount){//会员
+                        $('#vipBox').text('(会员'+Number(discount)*10+'折)');
+                        $('#vipBox').show();
+                    }else{//非会员
+                    }
+                    if(user_score*1<order_score*1){//本人积分小于订单所需积分
+                        $('input[type=checkbox]').eq(0).attr('disabled',true);
+                    }else{
+                        $('input[type=checkbox]').eq(0).attr('disabled',false);
+                    }
+                }
+            }
+        });
+
+        //	加商品
+        $('.confirmList').on('click','.add',function(){
+            var numbers=$(this).prevAll('input').val()*1+1;
+            var goods_id=$(this).parents('li').data('goods_id');
+            CartEditNum(1,goods_id,this,numbers);
+        });
+        //	减商品
+        $('.confirmList').on('click','.minus',function(){
+            var numbers=$(this).nextAll('input').val()*1-1;
+            var goods_id=$(this).parents('li').data('goods_id');
+            if(numbers<1){numbers=1;dlctipbox.show('该宝贝不能减少了呦~');return false;}
+            CartEditNum(2,goods_id,this,numbers);
+        });
+        //获取预订时间段
+        dlc_request('/api/Order/api',{api_name:'getSupplyTime',seller_id:getUrlParam('seller_id')},function(res) {
+            console.log(res);
+            if(res.code==1){
+                var timeArr=[];
+                for(var i=1;i<=3;i++){
+                    timeArr.push(addDate(i));
+                }
+                console.log(timeArr);
+
+                //预订时间
+                $('#appointTime').mobiscroll().scroller({
+                    theme: 'mobiscroll',
+                    display: 'bottom',
+                    cancelText: '',
+                    setText: '',
+                    closeOnOverlayTap: false,
+                    showLabel: true,
+                    lang: 'zh',
+                    wheels: [
+                        [{
+                            label:'',
+                            data:timeArr
+                        },
+                        {
+                        label: '',
+                        data: res.data
+                        }]
+                    ],
+                    onBeforeClose: function (event, inst) {
+                        var button=event.button;
+                        if (button !== 'cancel') {
+                            var value=event.valueText;
+                            console.log(value);
+                            $('#appointTime input').val(value);
+                            value=value.replace(/月/g,'-').replace(/日/g,' ');
+                            value=new Date().getFullYear()+'-'+value;
+                            sTime= Number(new Date(value.replace(/-/g,'/')))/1000;
+                            console.log(sTime);
+                        }
+                    },
+                    headerText: function (valueText) {
+                        return "<div class='headerText'><a class='l' onclick='cancle()'>取消</a><a class='r' onclick='confirm();'>完成</a></div><div class='notnotice'></div>";
+                    }
+                });
+            }
+        });
+        //预订时间
+//        $('#appointTime').mobiscroll().datetime({
+//            theme: 'mobiscroll',
+//            dateFormat:'yy-m-dd',
+//            display: 'bottom',
+//            cancelText: '',
+//            setText: '',
+//            closeOnOverlay: false,
+////            min:new Date(new Date().setMinutes(new Date().getMinutes()+180)),
+//            min:new Date(Number(new Date())+24*60*60*1000+180*60*1000),
+//            closeOnOverlayTap: false,
+//            showLabel: true,
+//            lang: 'zh',
+//            steps: {
+//                hour:2,
+//                minute: 60,
+//                zeroBased: true
+//            },
+//            onBeforeClose: function (event, inst) {
+//                var button=event.button;
+//                if (button !== 'cancel') {
+//                    console.log(event.valueText);
+//                    var startTime;
+//                    var endTime;
+//                    startTime=event.valueText;
+//                    endTime=Number(new Date(event.valueText))+2*60*60*1000;
+//                    sTime=Number(new Date(event.valueText));
+//                    eTime=endTime;
+//                    endTime=format(endTime,'Y-m-d H:i');
+//                    endTime=endTime.split('-')[1]+'-'+endTime.split('-')[2];
+//                    $('#appointTime input').val(startTime+' - '+endTime);
+//                }
+//            },
+//            headerText: function (valueText) {
+//                return "<div class='headerText'><a class='l' onclick='cancle()'>取消</a>时间段<a class='r' onclick='confirm();'>确定</a></div><div class='notnotice'></div>";
+//            }
+//        });
+
+
+        //提交订单
+        $('.confirmBtn').click(function () {
+            var isPay=1;//默认为微信支付
+            if(getUrlParam('type')==1){//预订餐
+                if(!sTime){
+                    dlctipbox.show('请选择预订时间');
+                    return false;
+                }
+            }
+
+            var check=$('.check:checked');
+            var str=[];
+            for(var i=0;i<check.length;i++){
+                str.push(check.eq(i).val());
+            }
+            if(str.length>1){//多选
+                invoice_id=getCookie('invoice_id');
+                isPay=2;//积分
+                if(!invoice_id){
+                    dlctipbox.show('请完善发票信息');
+                    return false;
+                }
+            }else{//单选
+                if(str[0]=='1'){//积分
+                    isPay=2;
+                }else if(str[0]=='2'){ //发票
+                    invoice_id=getCookie('invoice_id');
+                    if(!invoice_id){
+                        dlctipbox.show('请完善发票信息');
+                        return false;
+                    }
+                }else if(str.join()==''){//不选时
+                    invoice_id='';
+                }
+            }
+            console.log(str);
+            console.log(isPay);
+            console.log('开始时间：'+sTime);
+            console.log('发票id：'+invoice_id);
+            dlctipbox.show("请稍后...",'bottom',1000);
+            off=1;
+            if(isPay==2){//积分支付
+                dlc_request('/api/Order/api',{api_name:'submitOrder',cart_id:arr_id.join(','),isPay:2,appoint_time:sTime?sTime:'',invoice_id:invoice_id},function(res) {
+                    console.log(res);
+                    if(res.code==1){
+                        dlctipbox.show('支付成功');
+                        setCookie('invoice_id', " ");//删除cookie
+                        setTimeout(function () {
+                            WeixinJSBridge.call('closeWindow');//关闭当前页面
+                        },1500);
+                    }else{
+                        dlctipbox.show(res.msg);
+                        off=0;
+						location.replace('/h5/html/r_booking.html?id=' + getUrlParam('cupboard_id') + '&seller_id=' + getUrlParam('seller_id') + '&type=' + getUrlParam('type'));
+                    }
+                });
+            }else{//微信支付
+                dlc_request('/api/Order/api',{api_name:'submitOrder',cart_id:arr_id.join(','),isPay:1,appoint_time:sTime?sTime:'',invoice_id:invoice_id?invoice_id:''},function(res) {
+                    console.log(res);
+                    if(res.code==1){
+                        jsApiParameters=res.data;
+                        callpay();
+                    }else{
+                        dlctipbox.show(res.msg);
+                        off=0;
+						location.replace('/h5/html/r_booking.html?id=' + getUrlParam('cupboard_id') + '&seller_id=' + getUrlParam('seller_id') + '&type=' + getUrlParam('type'));
+                    }
+                });
+            }
+
+        })
+
+    });
+    function cancle() {
+        $('#appointTime').mobiscroll('cancel');
+    }
+
+    function confirm() {
+        $('#appointTime').mobiscroll('hide');
+    }
+    //计算
+    function totals() {
+        var total = 0;
+        var total_num =0;
+        $('.confirmList li').each(function(idx, elem){
+            var single_price = $(elem).find('.price').text();
+            var single_num = $(elem).find('.num').val();
+            total += single_price * single_num;
+            total_num+=single_num*1;
+            console.log('总价：'+total);
+        });
+        $('.total_num').text('共'+total_num+'件商品');
+        $('.sum_price').text('￥'+total.toFixed(2));
+        if(discount){//会员
+            $('#total').text('￥'+total*(Number(discount)/10).toFixed(2));
+        }else{//非会员
+            $('#total').text('￥'+total.toFixed(2));//总价
+        }
+        $('#order_score').text(total*score_rate);
+        if(user_score*1< $('#order_score').text()*1){//本人积分小于订单所需积分
+            $('input[type=radio]').eq(0).attr('disabled',true);
+        }else{
+            $('input[type=radio]').eq(0).attr('disabled',false);
+        }
+
+
+    }
+    //加减购物车
+    function  CartEditNum(type,goods_id,_this,numbers) {
+        dlc_request('/api/Shopping/api',{api_name:'shoppingCartEditNum',seller_id:getUrlParam('seller_id'),type:type,goods_type:getUrlParam('type'),goods_id:goods_id,cupboard_id:getUrlParam('cupboard_id')},function(res){
+            console.log(res);
+            if(res.code == '1'){
+                if(type==1){//加
+                    $(_this).prevAll('input').val(numbers);
+                }else{//减
+                    $(_this).nextAll('input').val(numbers);
+                }
+                totals();
+            }else{
+                dlctipbox.show(res.msg);
+            }
+        })
+    }
+
+    // 提交支付信息
+    var jsApiParameters = {};
+
+    //调用微信JS api 支付
+    function jsApiCall()
+    {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            jsApiParameters, // 提交的支付信息
+            function(res){
+                WeixinJSBridge.log(res.err_msg);
+//				alert(JSON.stringify(res));
+                if(res.err_msg == 'get_brand_wcpay_request:ok'){
+                    setCookie('invoice_id', " ");//删除cookie
+                    WeixinJSBridge.call('closeWindow');//关闭当前页面
+                }else{
+                    off=0;
+                    dlctipbox.show("取消支付")
+                    //history.go(-1)
+					location.replace('/h5/html/r_booking.html?id=' + getUrlParam('cupboard_id') + '&seller_id=' + getUrlParam('seller_id') + '&type=' + getUrlParam('type'));
+                }
+            }
+        );
+    }
+    //调用微信 支付
+    function callpay()
+    {
+        if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+            }
+        }else{
+            jsApiCall();
+        }
+    }
+    /********计算今天，明天，后天的日期************/
+    function addDate(days) {//days 0-今天，1-明天，2-后天
+        var d = new Date();
+        d.setDate(d.getDate() + days);
+        var m = d.getMonth() + 1;
+        var date=d.getDate();
+        return m + '月' + date+ '日';
+    }
+</script>

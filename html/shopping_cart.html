@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/zy_common.css" />
+    <link rel="stylesheet" href="../css/zy_base.css" />
+    <style>
+        .confirmBtn{
+            width:1.6rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="confirmList  marginBottom-20">
+        <ul>
+            <!--<li class="paddingTB-4 flex marginLR-24 relative" cart_id="1">-->
+            <!--<label class="flex-center choseBox paddingRight-20">-->
+            <!--<input type="checkbox"   class="goods-select" value="" hidden>-->
+            <!--<span class="roundBox"></span>-->
+            <!--</label>-->
+            <!--<img src="../img/img0.png" alt="">-->
+            <!--<div class="marginLeft-30">-->
+            <!--<p class="font-15 color-333 marginBottom-10">招牌番茄鸡排饭</p>-->
+            <!--<p class="font-14 color-666 marginBottom-10">￥<span class="price">26.00</span></p>-->
+            <!--<p class="font-14 color-999">单点</p>-->
+            <!--</div>-->
+            <!--<div class="flex handleBox">-->
+            <!--<label class="btnBox minus"><button class="font-18 color-666">−</button></label>-->
+            <!--<input class="font-18 btnBox text-center num" type="number" name="" value="1">-->
+            <!--<label class="btnBox add"><button class="font-18 color-666">+</button></label>-->
+            <!--</div>-->
+            <!--</li>-->
+        </ul>
+    </div>
+    <section class="confirmOrder">
+        <div class="flex-1 bgf font-15 paddingLR-24 color-999">
+            <label class="flex-center choseBox">
+                <input type="checkbox" value="" hidden class="allChose">
+                <span class="roundBox marginRight-20"></span>
+                已选(<span class="total_num">0</span>)<span class="font-16 color2 paddingLeft-20 sum_price">￥0.00</span>
+            </label>
+        </div>
+        <div class="clearBtn text-center color-fff  font-16">删除</div>
+        <div class="confirmBtn text-center color-fff  font-16">下单</div>
+    </section>
+</body>
+
+</html>
+<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js?v=5.0" type="text/javascript" charset="utf-8"></script>
+<script>
+    isBinding();
+
+    var lock = 0,
+        lock2 = 0;
+    $(function () {
+        loadingShow();
+        dlc_request('/api/Shopping/api', {
+            api_name: 'shoppingCartList',
+            cupboard_id: getUrlParam('cupboard_id'),
+            goods_type: getUrlParam('type'),
+            pagesize: 999
+        }, function (res) {
+            console.log(res);
+            loadingHide();
+            var str = '';
+            if (res.code == '1') {
+                $.each(res.data, function (inx, item) {
+                    str += '<li class="paddingTB-4 flex paddingLR-24 relative bgf" goods_id="' +
+                        item.goods_id + '" cart_id="' + item.cart_id + '">' +
+                        ' <label class="flex-center choseBox paddingRight-20">' +
+                        ' <input type="checkbox"   class="goods-select" value="" hidden>' +
+                        '<span class="roundBox"></span>' +
+                        '  </label>' +
+                        ' <img src="' + item.cover_url + '" class="details_img" alt="">' +
+                        ' <div class="marginLeft-30">' +
+                        ' <p class="font-15 color-333 marginBottom-10">' + item.title + '</p>' +
+                        ' <p class="font-14 color-666 marginBottom-10">￥<span class="price">' +
+                        item.price + '</span></p>' +
+                        ' <p class="font-14 color-999">' + item.type_title + '</p>' +
+                        ' </div>' +
+                        ' <div class="flex handleBox">' +
+                        ' <label class="btnBox minus"><button class="font-18 color-666">−</button></label>' +
+                        '<input class="font-18 btnBox text-center num" type="number" name="" value="' +
+                        item.num + '" readonly>' +
+                        '<label class="btnBox add"><button class="font-18 color-666">+</button></label>' +
+                        '</div>' +
+                        '</li>';
+                });
+                if (str) {
+                    $('.confirmList ul').html(str);
+                    totals();
+                    $('.total_num').text(res.data.cart_num);
+                } else {
+                    $('.confirmList ul').html(emptyTip('暂无商品'));
+                }
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        });
+
+        //详情
+        $('.confirmList').on('click', '.details_img', function () {
+            location.href = 'details.html?goods_id=' + $(this).parents('li').attr('goods_id') +
+                '&cupboard_id=' + getUrlParam('cupboard_id') + '&type=' + getUrlParam('type') +
+                '&seller_id=' + getUrlParam('seller_id');
+        });
+
+        //	加商品
+        $('.confirmList').on('click', '.add', function () {
+            if (lock) {
+                return false;
+            }
+            lock = 1;
+            var numbers = $(this).prevAll('input').val() * 1 + 1;
+            var goods_id = $(this).parents('li').attr('goods_id');
+            CartEditNum(1, goods_id, this, numbers);
+        });
+        //	减商品
+        $('.confirmList').on('click', '.minus', function () {
+            if (lock2) {
+                return false;
+            }
+            lock2 = 1;
+            var numbers = $(this).nextAll('input').val() * 1 - 1;
+            var goods_id = $(this).parents('li').attr('goods_id');
+            if (numbers < 1) {
+                numbers = 1;
+                dlctipbox.show('该宝贝不能减少了呦~');
+                return false;
+            }
+            CartEditNum(2, goods_id, this, numbers);
+        })
+        //选择
+        $('.confirmList').on('change', '.goods-select', function () {
+            var checkedObj = $('.goods-select:checked');
+            var listObj = $('.confirmList li');
+            if (checkedObj.length == 0) $('.allChose').prop('checked', false);
+            for (var i = 0; i < checkedObj.length; i++) {
+                if (checkedObj.length <= listObj.length) {
+                    $('.allChose').prop('checked', true);
+                } else {
+                    $('.allChose').prop('checked', false);
+                }
+            }
+            totals();
+        });
+        //全选
+        $('.allChose').change(function () {
+            if (!$(this).is(":checked")) {
+                $('.goods-select').prop('checked', false);
+            } else {
+                $('.goods-select').prop('checked', true);
+            }
+            totals();
+        });
+        //删除
+        $('.clearBtn').click(function () {
+            var arr = [];
+            $('.goods-select:checked').each(function (index, ele) {
+                arr.push($('.goods-select').eq(index).parents('li').attr('cart_id'));
+            });
+            arr = arr.join(',');
+            console.log(arr);
+            if (arr == '') {
+                alert('请选择删除的商品');
+            } else {
+                var clear = confirm('是否删除所选商品？');
+                if (clear) {
+                    clear_carts(arr);
+                }
+
+            }
+        });
+        //下单
+        $('.confirmBtn').click(function () {
+            var arr = [];
+            $('.goods-select:checked').each(function (index, ele) {
+                arr.push($('.goods-select').eq(index).parents('li').attr('cart_id'));
+            });
+            arr = arr.join(',');
+            console.log(arr);
+            if (arr == '') {
+                alert('请选择下单的商品');
+            } else {
+                location.href = 'confirm_order.html?cart_id=' + arr + '&type=' + getUrlParam('type') +
+                    '&seller_id=' + getUrlParam('seller_id') + '&cupboard_id=' + getUrlParam(
+                        'cupboard_id');
+            }
+
+        });
+    });
+    //加减购物车
+    function CartEditNum(type, goods_id, _this, numbers) {
+        dlc_request('/api/Shopping/api', {
+            api_name: 'shoppingCartEditNum',
+            seller_id: getUrlParam('seller_id'),
+            type: type,
+            goods_type: getUrlParam('type'),
+            goods_id: goods_id,
+            cupboard_id: getUrlParam('cupboard_id')
+        }, function (res) {
+            console.log(res);
+            lock = 0;
+            lock2 = 0;
+            if (res.code == '1') {
+                if (type == 1) { //加
+                    $(_this).prevAll('input').val(numbers);
+                    totals();
+                } else { //减
+                    $(_this).nextAll('input').val(numbers);
+                    totals();
+                }
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        })
+    }
+    //删除购物车
+    function clear_carts(cart_id) {
+        dlc_request('/api/Shopping/api', {
+            api_name: 'delShoppingCart',
+            cart_id: cart_id
+        }, function (res) {
+            console.log(res);
+            if (res.code == '1') {
+                dlctipbox.show('删除成功');
+                location.reload();
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        });
+    }
+    //计算
+    function totals() {
+        var checkedObj = $('.goods-select:checked');
+        var length = checkedObj.length;
+        var total = 0;
+        var total_num = 0;
+        for (var i = 0; i < length; i++) {
+            var single_price = checkedObj.parents('li').find('.price').eq(i).text();
+            var single_num = checkedObj.parents('li').find('.num').eq(i).val();
+            total += single_price * single_num;
+            total_num += single_num * 1;
+            console.log('总价：' + total);
+        }
+        $('.total_num').text(total_num);
+        $('.sum_price').text('￥' + total.toFixed(2));
+    }
+</script>

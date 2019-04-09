@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        我的订单
+    </title>
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <meta content="webkit" name="renderer">
+    <meta content="no-siteapp" http-equiv="Cache-Control" />
+    <meta content="yes" name="mobile-web-app-capable" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no,email=no,address=no" name="format-detection" />
+    <meta content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+    <link href="../css/y_common.css" rel="stylesheet" />
+    <link href="../css/swiper.min.css" rel="stylesheet" />
+    <link href="../css/dropload.css" rel="stylesheet" />
+    <script src="../js/adaptive.js" type="text/javascript"></script>
+    <script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="../js/dlc.js?v=5.0" type="text/javascript"></script>
+    <script src="../js/drop/dropload.min.js" type="text/javascript"></script>
+    <script>
+        window['adaptive'].desinWidth = 750;
+        window['adaptive'].baseFont = 28;
+        window['adaptive'].init();
+    </script>
+    <style type="text/css">
+        /**/
+
+        .menu {
+            display: flex;
+            flex-flow: row;
+            background: #fff;
+            align-items: center;
+            flex-shrink: 0;
+            justify-content: space-around;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .menu li {
+            padding: 3% 0;
+            width: 25%;
+            flex: 1;
+            font-size: .32rem;
+            list-style: none;
+            text-align: center;
+        }
+
+        .menu .activ {
+            border-bottom: 2px solid #f79e20;
+            color: #f79e20;
+        }
+
+
+        .content_detail {
+            display: flex;
+            padding: .2rem;
+            /*justify-content: space-between;*/
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bigBox">
+        <div class="menu">
+            <li class="activ" data-type='3'>全部</li>
+            <li data-type='2'>未取餐</li>
+            <li data-type='1'>已取餐</li>
+        </div>
+        <div class="content ListBOx container">
+            <ul class="main_list"></ul>
+            <!--   <div class="scroll_box">
+                <div class="list bdb mt20">
+                    <div class="flex">
+                        <img src="../img/y_6.png" style="width: .32rem;height: .3rem" />
+                        <span class="col9 ml20">添添聚原味1111</span>
+                    </div>
+                    <span class="color1">未取餐</span>
+                </div>
+                <div class="content_detail">
+                    <img src="../img/y_7.png" style="width: 2.2rem;height: 1.7rem" />
+                    <div class="ml20">
+                        <p>可乐鸡翅+时令蔬菜+老火炖汤+米饭</p>
+                        <div class="col9 mt50">超值套餐</div>
+                        <div class="col9 flex-sb mt20">￥35.00 <span class="col3">x1</span></div>
+                    </div>
+                </div>
+                <div class="flex-sb bw p20">
+                    <span class="col9">2017-05-12  12:01:30</span>
+                    <div>
+                        共1件商品 合计 <span class="color1">￥35.00</span>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+</body>
+
+</html>
+<script type="text/javascript">
+    isBinding();
+
+    $('.menu').on('click', 'li', function () {
+        $(this).addClass('activ').siblings().removeClass('activ')
+        type($(this).data('type'));
+        console.log($(this).data('type'))
+        $('.main_list').children().remove();
+    })
+    var type, page = 1,
+        pageSize = 10;
+    type(3) //初始化
+    function type(type) {
+        loadingShow();
+        dlc_request('/api/user/api', {
+            api_name: 'myOrder',
+            ordertype: type,
+            pageSize: 999
+        }, function (res) {
+            loadingHide();
+            console.log(res);
+            if (res.code == 1) {
+                if (res.data.length >= 1) {
+                    var a = res.data,
+                        str = '';
+                    for (i in a) {
+                        str += '<a class="scroll_box" data-id="' + a[i].order_id + '"  data-son="' + a[i].son_oids +
+                            '" href="y_orderDetail.html?id=' + a[i].order_id + '">' +
+                            '<div class="list bdb mt20">' +
+                            '<div class="flex">' +
+                            '<img src="../img/y_6.png" style="width: .32rem;height: .3rem" />' +
+                            '<span class="col9 ml20">' + a[i].seller_title + '</span>' +
+                            '</div>' +
+                            '<span class="color1 status">' + a[i].status + '</span>' +
+                            '</div>';
+                        $.each(a[i].goods_list, function (idx, item) {
+                            str += '<div class="content_detail">' +
+                                '<img src="' + item.cover_url +
+                                '" style="width: 2.2rem;height: 1.7rem" />' +
+                                '<div class="ml20 flex1">' +
+                                '<p>' + item.title + '</p>' +
+                                '<div class="col9 mt50">' + item.goods_type_title + '</div>' +
+                                '<div class="col9 flex-sb mt20">￥' + item.price +
+                                ' <span class="col3">x' + item.buy_num + (item.input_num > 0 ? '(' +
+                                    item.input_num + '份未取)' : '') + '</span></div>' +
+                                '</div>' +
+                                '</div>';
+                        });
+                        str += '<div class="flex-sb bw p20">' +
+                            '<span class="col9">' + format((a[i].ctime).toString(), 'Y-m-d H:i:s') + '</span>' +
+                            '<div> 共' + a[i].goods_num + '件商品 合计 <span class="color1">￥' + a[i].order_money +
+                            '</span> </div></div></a>';
+                    }
+                    $('.main_list').append(str);
+                } else {
+                    $('.main_list').html(emptyTip('暂无数据'));
+                }
+            } else {
+                dlctipbox.show(res.msg)
+            }
+        })
+    }
+</script>

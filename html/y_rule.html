@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        积分规则
+    </title>
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <meta content="webkit" name="renderer">
+    <meta content="no-siteapp" http-equiv="Cache-Control" />
+    <meta content="yes" name="mobile-web-app-capable" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no,email=no,address=no" name="format-detection" />
+    <meta content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+    <link href="../css/y_common.css" rel="stylesheet" />
+    <script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="../js/adaptive.js" type="text/javascript"></script>
+    <script src="../js/dlc.js?v=5.0" type="text/javascript"></script>
+    <script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script>
+        window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+        .title {
+            color: #999;
+            margin-top: .4rem;
+            text-align: center;
+        }
+
+        .title b {
+            width: .5rem;
+            height: 1px;
+            background: #ccc;
+        }
+
+        .rule_container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            position: relative;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .rule_container li {
+            margin: .2rem 0;
+        }
+
+        .rule_container .bottom {
+            position: absolute;
+            bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="rule_container">
+        <div class="title flex"><b class="mr20"></b>规则说明<b class="ml20"></b></div>
+        <ul>
+            <li class="integration_rule"></li>
+
+        </ul>
+        <div class="bottom"><img src="../img/y_bottom.png" style="height: 1.66rem" /></div>
+    </section>
+</body>
+
+</html>
+<script type="text/javascript">
+    isBinding();
+    dlc_request('/api/vip/api', {
+        api_name: 'integratioRule',
+        openid: localStorage.getItem('token')
+    }, function (res) {
+        console.log(res);
+        if (res.code == 1) {
+            $('.integration_rule').text(res.data.integration_rule);
+        }
+    })
+</script>

@@ -1,0 +1,227 @@
+/************作者:陈之勇*********************/
+.color1{
+	color: #ffaa57;
+}
+.color2{
+	color: #ff6f6f;
+}
+.bg1{
+	background-color:#ffaa57 ;
+}
+.bg2{
+	background-color:#ff6f6f ;
+}
+.arrow-r{
+	width: .24rem;
+}
+.mask{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,.5);
+	z-index: 99;
+	display: none;
+}
+.confirm{
+    display: block;
+    width: 86%;
+    margin: 0 auto;
+    height: 0.88rem;
+    line-height: 0.88rem;
+    border-radius: 0.44rem;
+    color: #fff;
+    border: none;
+    font-size: 0.32rem;	
+    text-align: center;
+	background: linear-gradient(to right, #ffb558 , #ff9757);
+}
+.confirm:active{
+	background: #ccc;
+}
+.back{
+	width: 7%;
+	padding: 2% 3%;
+}
+.lineH{
+	height: 0.4rem;
+	line-height: 0.4rem;
+	flex: 1;
+}
+
+.L-block{
+	background: #fff;
+}
+.L-block-name{
+	display: inline-block;	
+    width: 1.55rem;
+}
+.L-block-input{
+    border: none;
+    line-height: 1rem;
+    height: 1rem;	
+}
+.L-block-input::-webkit-input-placeholder{
+	color: #999;
+}
+.border-bottom{
+	border-bottom: 1px solid #e5e5e5;
+}
+.allBtn{
+	height: 1rem;
+	line-height: 1rem;
+	text-align: center;
+}
+/************details*********************/
+.details_logo{
+	height:4rem;
+}
+.details_logo img{
+	width:100%;
+	height:100%;
+}
+.detailsBox img{
+	width:100%;
+}
+/************confirm_order*********************/
+.confirmBox{
+	padding-bottom: 1.2rem;
+}
+.confirmList ul li>img{
+	width:1.9rem;
+	height:1.7rem;
+}
+.confirmList ul li + li{
+	border-top:1px solid #e5e5e5;
+}
+.btnBox{
+	width: 0.68rem;
+	height: 0.68rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid #e5e5e5;
+}
+.minus {
+	border-right: none;
+	border-radius: 6px 0 0 6px;
+}
+.add {
+	border-left: none;
+	border-radius: 0 6px 6px 0;
+}
+.handleBox{
+	position: absolute;
+	right: .24rem;
+	bottom: 12%;
+	z-index:99;
+}
+.sumBox{
+	height: 1rem;
+	line-height: 1rem;
+}
+.choseBox>div + div{
+	border-top:1px solid #e5e5e5;
+}
+.roundBox{
+	display: inline-block;
+	width:.6rem;
+	height:.6rem;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+	border:1px solid #e5e5e5;
+}
+.choseBox input:checked + span{
+	background: url("../img/round.png") no-repeat center center;
+	background-size: 74%;
+}
+.confirmOrder{
+	position: fixed;
+	bottom:0;
+	left:0;
+	right:0;
+	z-index:99;
+	height: 1rem;
+	line-height: 1rem;
+	display: flex;
+}
+.confirmBtn{
+	width:2rem;
+	background: linear-gradient(to left bottom, #ffb558 , #ff9757);
+	background: -webkit-linear-gradient(left bottom, #ffb558 , #ff9757);
+}
+.clearBtn{
+	width:1.6rem;
+	background: linear-gradient(to right top, #ff9858 , #ff7d57);
+		background:-webkit-linear-gradient(right top, #ff9858 , #ff7d57);
+}
+#appointTime input{
+	border:none;
+	text-align: right;
+	font-size: .3rem;
+	color: #333;
+}
+.headerText{
+	display: flex;
+	justify-content: space-around;
+	font-size: 0.3rem;
+}
+/************invoice*********************/
+.tabBox{
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	z-index: 99;
+}
+.tabBox div{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex: 1;
+	height: 1rem;
+	line-height: 1rem;
+}
+.tabBox div span{
+	width: 100%;
+	text-align: center;
+	line-height: .5rem;
+	height: .5rem;
+}
+.tabBox div + div span{
+	border-left: 1px solid #e5e5e5;
+}
+.tabBox .active{
+	color: #f79e20;
+	border-bottom: 2px solid #f79e20;
+}
+.invoiceBox{
+	margin-top: 1.2rem;
+}
+.invoiceBox input{
+	font-size: .3rem;
+}
+.invoiceBox  input::-webkit-input-placeholder{
+	color: #999;
+}
+.invoiceBox .box1 li + li,.invoiceBox .box2 li + li{
+	border-top:1px solid #e5e5e5;
+}
+.round{
+	display: inline-block;
+	width:.6rem;
+	height:.6rem;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+	border:1px solid #e5e5e5;
+}
+.invoiceBox .box2 input:checked + span{
+	background: url("../img/round.png") no-repeat center center;
+	background-size: 74%;
+}
+.invoiceBox .active{
+	display: none;
+}

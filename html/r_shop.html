@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="../css/common.css" />
+</head>
+<style type="text/css">
+	.img {
+		width: 1.8rem;
+		height: 1.8rem;
+	}
+
+	.star img {
+		width: 0.22rem;
+		height: 0.22rem;
+		margin: 0 1px;
+	}
+
+	.star b {
+		font-size: 0.24rem;
+	}
+
+	ul li img {
+		width: 1.9rem;
+		height: 1.7rem;
+	}
+</style>
+
+<body>
+	<header class="flex plr20 ptb20 bw">
+		<!--<img src="../img/r_img.png" alt="" class="img mr30"/>
+			<div class="flex flex_column flex1" style="justify-content: space-around;">
+				<span class="font16" style="font-weight: 600;">添添聚源味</span>
+				<span class="font14 col6">东莞市南城区周溪</span>
+				<div class="flex_sb">
+					<p class="star flex_a">
+						<img src="../img/star_on.png" alt="" />
+						<img src="../img/star_on.png" alt="" />
+						<img src="../img/star_on.png" alt="" />
+						<img src="../img/star_on.png" alt="" />
+						<img src="../img/star_on.png" alt="" />
+						<b class="ml20">8.0</b>
+					</p>
+					<span class="col9 font11">销量：999+</span>
+				</div>
+			</div>-->
+	</header>
+	<div class="flex_sb b bdt bw plr30 ptb30" id="comment">
+		<p class="flex_a"><img src="../img/r_comment.png" alt="" style="width: 0.42rem;height: 0.4rem;" /><span class="mlr24">评价</span><b
+			    class="col6 eval_num" style="font-weight: normal;">(0)</b></p>
+		<p class="flex_a"><span class="mr20">全部评价</span><img src="../img/arrow-right.png" alt="" style="width: 0.16rem;height: 0.28rem;" /></p>
+	</div>
+	<div class="mt20 bw bdb pb20">
+		<p class="flex_aj pt30"><i class="line_row"></i><span class="mlr24">今日美餐</span><i class="line_row"></i></p>
+		<p class="tac col9 font12 mt10 mb20">今天新鲜，即取即食</p>
+		<ul class="flex_sa will">
+			<!--<li>
+					<img src="../img/img0.png" alt="" />
+					<p class="font12">咸蛋肉饼饭</p>
+				</li>
+				<li>
+					<img src="../img/img0.png" alt="" />
+					<p class="font12">咸蛋肉饼饭</p>
+				</li>
+				<li>
+					<img src="../img/img0.png" alt="" />
+					<p class="font12">咸蛋肉饼饭</p>
+				</li>-->
+		</ul>
+	</div>
+	<div class="more bw flex_aj ptb30" id="today">
+		<span>快来下单吧</span><img src="../img/r_more.png" style="width: 0.3rem;height: 0.3rem;" class="ml10" />
+	</div>
+	<div class="mt20 bw bdb pb20">
+		<p class="flex_aj pt30"><i class="line_row"></i><span class="mlr24">预定餐</span><i class="line_row"></i></p>
+		<p class="tac col9 font12 mt10 mb20">新鲜餐需提前一天预定</p>
+		<ul class="flex_sa book">
+			<!--<li>
+					<img src="../img/img0.png" alt="" />
+					<p class="font12">咸蛋肉饼饭</p>
+				</li>
+				<li>
+					<img src="../img/img0.png" alt="" />
+					<p class="font12">咸蛋肉饼饭</p>
+				</li>
+				<li>
+					<img src="../img/img0.png" alt="" />
+					<p class="font12">咸蛋肉饼饭</p>
+				</li>-->
+		</ul>
+	</div>
+	<div class="more bw flex_aj ptb30" id="booking">
+		<span>立即预定</span><img src="../img/r_more.png" style="width: 0.3rem;height: 0.3rem;" class="ml10" />
+	</div>
+</body>
+
+</html>
+<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js?v=5.0" type="text/javascript" charset="utf-8"></script>
+<script>
+	isBinding();
+
+	dlc_request('/api/Cupboard/api', {
+		api_name: 'cupboard_index',
+		device_number: getUrlParam('id'),
+		openid: localStorage.getItem('token')
+	}, function (res) {
+		console.log(res)
+		$('header').append('<img src="' + res.data.cupboard_info.headimg + '" alt="" class="img mr30"/>' +
+			'<div class="flex flex_column flex1" style="justify-content: space-around;">' +
+			'<span class="font16" style="font-weight: 600;">' + res.data.cupboard_info.title + '</span>' +
+			'<span class="font14 col6">' + res.data.cupboard_info.addr + '</span>' +
+			'<div class="flex_sb">' +
+			'<p class="star flex_a">' +
+			'<img src="../img/star_on.png" alt="" />' +
+			'<img src="../img/star_on.png" alt="" />' +
+			'<img src="../img/star_on.png" alt="" />' +
+			'<img src="../img/star_on.png" alt="" />' +
+			'<img src="../img/star_on.png" alt="" />' +
+			'<b class="ml20">' + res.data.cupboard_info.eval_avg + '</b>' +
+			'</p>' +
+			'<span class="col9 font11">销量：' + res.data.cupboard_info.total_sales + '</span>' +
+			'</div>' +
+			'</div>')
+		$('.eval_num').text(res.data.cupboard_info.eval_num)
+		if (res.data.will_.length != 0) {
+			for (i in res.data.will_) {
+				$('.will').append('<li><img src="' + res.data.will_[i].cover_url + '" alt="" /><p class="font12">' + res.data.will_[
+					i].title + '</p></li>')
+			}
+		} else {
+			$('.will').append(
+				'<li class="flex_aj"><i class="line_row"></i><p class="font12 mlr24">暂无数据</p><i class="line_row"></i></li>')
+		}
+		if (res.data.book_.length != 0) {
+			for (i in res.data.book_) {
+				$('.book').append('<li><img src="' + res.data.book_[i].cover_url + '" alt="" /><p class="font12">' + res.data.book_[
+					i].title + '</p></li>')
+			}
+		} else {
+			$('.book').append(
+				'<li class="flex_aj"><i class="line_row"></i><p class="font12 mlr24">暂无数据</p><i class="line_row"></i></li>')
+		}
+		/*
+			type值说明；
+			1--预订餐
+			2--今日每餐
+			3--订餐
+		 */
+
+		$('#comment').attr('onclick', "location.href='r_comment.html?id=" + res.data.cupboard_info.seller_id + "'");
+		$('#booking').attr('onclick', "location.href='r_booking.html?id=" + res.data.cupboard_info.cupboard_id +
+			"&seller_id=" + res.data.cupboard_info.seller_id + "&type=1" + "'");
+		$('#today').attr('onclick', "location.href='r_today.html?id=" + res.data.cupboard_info.cupboard_id + "&seller_id=" +
+			res.data.cupboard_info.seller_id + "&type=2" + "'")
+	})
+</script>

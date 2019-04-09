@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>还餐盒</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/main.css" />
+    <style>
+        .bImg {
+            background: url("../img/icon8.png") no-repeat;
+            background-size: 100%;
+            width: 200px;
+            height: 200px;
+        }
+
+        .layui-m-layerbtn span[yes] {
+            color: #ff9f57
+        }
+    </style>
+</head>
+
+<body>
+    <article class="bigBox">
+        <div class="flex_a ptb20 plr24 bw" id="shop">
+            <!--<div>-->
+            <!--<img src="../img/img0.png" class="food_pic">-->
+            <!--</div>-->
+            <!--<div class="flex1 ml20">-->
+            <!--<p class="font16">添添聚源味自动售卖机</p>-->
+            <!--<p class="mt10 col9">东莞市南城区周溪</p>-->
+            <!--</div>-->
+        </div>
+        <section class="container bw mt20 flex_a flex_column pt130">
+            <p class="font16">请扫描餐盒上的二维码进行归还</p>
+            <p class="font13 col9 mt20">温馨提示:如超出归还时间,餐盒将无法归还</p>
+            <div class="mt100" id="scanner">
+                <div class="bImg"></div>
+            </div>
+        </section>
+    </article>
+</body>
+
+</html>
+<script src="../js/jquery-1.8.3.min.js"></script>
+<script src="../js/dlc.js?v=5.0"></script>
+<script src="../js/layer.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script>
+
+    isBinding();
+    // $('#scanner').on('click',function(){
+    //     dlctipbox.alert_img('您已超出还餐盒的时间，无法归还，谢谢!');
+    // });
+
+    var cupboard_id = getUrlParam('cupboard_id');
+    var qr_code, box_number;
+
+    dlc_request('/api/Cupboard/api', {
+        'api_name': 'alsoEat',
+        'cupboard_id': cupboard_id
+    }, function (res) {
+        console.log(res);
+        if (res.code == 1) {
+            $('#shop').html('<div>' +
+                '<img src="' + res.data.headimg + '" class="food_pic">' +
+                '</div>' +
+                '<div class="flex1 ml20">' +
+                '<p class="font16">' + res.data.title + '</p>' +
+                '<p class="mt10 col9">' + res.data.address + '</p>' +
+                '</div>');
+        }
+    });
+    dlc_request('/api/user/getTicket', {}, function (res) {
+        if (res.code == 1) {
+            var timestamp = (new Date().getTime() / 1000).toFixed(0);
+            var nonceStr = Math.random().toString(36).substr(2);
+            var ticket = wx_js(res.data.ticket, timestamp, nonceStr);
+            wx.config({
+                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端//alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                appId: 'wx42a447a217e4de78', // 必填，公众号的唯一标识
+                timestamp: timestamp, // 必填，生成签名的时间戳
+                nonceStr: nonceStr, // 必填，生成签名的随机串
+                signature: ticket, // 必填，签名，见附录1
+                jsApiList: ['checkJsApi',
+                    'onMenuShareTimeline',
+                    'onMenuShareAppMessage',
+                    'onMenuShareQQ',
+                    'onMenuShareWeibo',
+                    'hideMenuItems',
+                    'showMenuItems',
+                    'hideAllNonBaseMenuItem',
+                    'showAllNonBaseMenuItem',
+                    'translateVoice',
+                    'startRecord',
+                    'stopRecord',
+                    'onRecordEnd',
+                    'playVoice',
+                    'pauseVoice',
+                    'stopVoice',
+                    'uploadVoice',
+                    'downloadVoice',
+                    'chooseImage',
+                    'previewImage',
+                    'uploadImage',
+                    'downloadImage',
+                    'getNetworkType',
+                    'openLocation',
+                    'getLocation',
+                    'hideOptionMenu',
+                    'showOptionMenu',
+                    'closeWindow',
+                    'scanQRCode',
+                    'chooseWXPay',
+                    'openProductSpecificView',
+                    'addCard',
+                    'chooseCard',
+                    'openCard'
+                ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            });
+            wx.ready(function () {
+                $('#scanner').on('click', function () {
+                    wx.scanQRCode({
+                        needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+                        scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+                        success: function (res) {
+
+                            qr_code = res.resultStr;
+
+                            returnBox(qr_code)
+                            // alert(JSON.stringify(res));
+
+                        },
+                        error: function (err) {
+                            //alert(JSON.stringify(err));
+                        }
+                    });
+                });
+            })
+        } else {
+            console.log(res.msg);
+        }
+    })
+
+    function returnBox(qr_code) {
+        var data = {
+            'api_name': 'scanOpen',
+            'cupboard_id': cupboard_id,
+            'code_number': qr_code
+        }
+        dlc_request('/api/Cupboard/api', data, function (res) {
+            // alert(JSON.stringify(data));
+            if (res.code == 1) {
+                /*
+                 * by Ocean start
+                 */
+                box_number = res.data;
+                // 获取格子开关门状态，轮循5秒一次
+                layer.open({
+                    title: "提示",
+                    content: res.msg
+                });
+                var interval = setInterval(function () {
+                    dlc_request('/api/Box/api', {
+                        'api_name': 'checkBoxClosed',
+                        'cupboard_id': cupboard_id,
+                        'box_number': box_number
+                    }, function (res) {
+                        if (res.code == 1) {
+                            if (res.data.data.length > 0) {
+                                clearInterval(interval); // 清除轮循
+                                dlc_request('/api/Cupboard/api', {
+                                    'api_name': 'giveBackSuccess',
+                                    'cupboard_id': cupboard_id,
+                                    'box_number': box_number,
+                                    'qr_code': qr_code,
+                                    'openid': user_token()
+                                }, function (res) {
+                                    if (res.code == 1) {
+                                        layer.open({
+                                            title: "仓门已关闭",
+                                            content: res.msg,
+                                            btn: ['返回首页', '本次服务结束'],
+                                            yes: function (index) {
+                                                history.go(-2); // 返回售卖机首页
+                                            },
+                                            no: function (index) {
+                                                window.location.reload();
+                                            }
+                                        });
+                                        // 30秒倒计时，无操作直接返回首页
+                                        var time = 30;
+                                        var Interval1 = setInterval(function () {
+                                            if (time <= 0) {
+                                                history.go(-2); // 返回售卖机首页
+                                                clearInterval(Interval1); // 清除轮循
+                                            }
+                                            time--;
+                                        }, 1000);
+                                    } else {
+                                        layer.open({
+                                            title: "提示",
+                                            content: res.msg
+                                        });
+                                    }
+                                });
+                            }
+                        } else {
+                            layer.open({
+                                title: "提示",
+                                content: res.msg
+                            });
+                        }
+                    });
+                }, 5000);
+                /*
+                 * by Ocean end
+                 */
+
+            } else {
+                // dlctipbox.show(res.msg);
+                layer.open({
+                    title: "提示",
+                    content: res.msg
+                });
+            }
+        });
+    }
+</script>
